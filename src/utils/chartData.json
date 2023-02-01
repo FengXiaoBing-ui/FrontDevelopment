@@ -1,0 +1,428 @@
+{
+  "code": 200,
+  "data": {
+    "result": [
+      {
+        "id": "1001",
+        "classificationAlcohol": "白酒",
+        "region": "贵州省",
+        "brand": "茅台",
+        "typeAromatic": "酱香型",
+        "time": "2022",
+        "lastYearCount": "1000",
+        "totalMonthly": {
+          "averageTotal": "10",
+          "increase": "↑ 10%"
+        },
+        "totalAveragePeopleMonthly": {
+          "averageTotal": "100",
+          "increase": "↑ 10%"
+        },
+        "brandTurnover": {
+          "totalCount": "500",
+          "brandTurnover": "60"
+        },
+        "sale": {
+          "count": "1000",
+          "lastYearCount": "900",
+          "increase": "↑ 10%",
+          "newPeopleDeal": "100",
+          "averageDeal": "10"
+        },
+        "deal": {
+          "count": "1000",
+          "lastYearCount": "800",
+          "increase": "↓ -10%",
+          "newPeopleDeal": "400",
+          "averageDeal": "100"
+        }
+      },
+      {
+        "id": "1002",
+        "classificationAlcohol": "葡萄酒",
+        "region": "四川省",
+        "brand": "东方国宾",
+        "typeAromatic": "浓香型",
+        "time": "2022",
+        "lastYearCount": "4231",
+        "totalMonthly": {
+          "averageTotal": "231",
+          "increase": "↑ 8%"
+        },
+        "totalAveragePeopleMonthly": {
+          "averageTotal": "456",
+          "increase": "↑ 3%"
+        },
+        "brandTurnover": {
+          "totalCount": "1235",
+          "brandTurnover": "463"
+        },
+        "sale": {
+          "count": "4613",
+          "lastYearCount": "456",
+          "increase": "↑ 12%",
+          "newPeopleDeal": "216",
+          "averageDeal": "456"
+        },
+        "deal": {
+          "count": "4536",
+          "lastYearCount": "4689",
+          "increase": "↓ -30%",
+          "newPeopleDeal": "897",
+          "averageDeal": "678"
+        }
+      },
+      {
+        "id": "1003",
+        "classificationAlcohol": "白酒",
+        "region": "湖南省",
+        "brand": "东方国宾",
+        "typeAromatic": "浓香型",
+        "time": "2022",
+        "lastYearCount": "946",
+        "totalMonthly": {
+          "averageTotal": "312",
+          "increase": "↑ 8%"
+        },
+        "totalAveragePeopleMonthly": {
+          "averageTotal": "897",
+          "increase": "↑ 3%"
+        },
+        "brandTurnover": {
+          "totalCount": "5499",
+          "brandTurnover": "324"
+        },
+        "sale": {
+          "count": "4563",
+          "lastYearCount": "131",
+          "increase": "↑ 12%",
+          "newPeopleDeal": "2646",
+          "averageDeal": "683"
+        },
+        "deal": {
+          "count": "964",
+          "lastYearCount": "358",
+          "increase": "↓ -30%",
+          "newPeopleDeal": "345",
+          "averageDeal": "365"
+        }
+      },
+      {
+        "id": "1004",
+        "classificationAlcohol": "葡萄酒",
+        "region": "云南省",
+        "brand": "茅台",
+        "typeAromatic": "清香型",
+        "time": "2022",
+        "lastYearCount": "3654",
+        "totalMonthly": {
+          "averageTotal": "789",
+          "increase": "↑ 8%"
+        },
+        "totalAveragePeopleMonthly": {
+          "averageTotal": "1321",
+          "increase": "↑ 3%"
+        },
+        "brandTurnover": {
+          "totalCount": "316",
+          "brandTurnover": "498"
+        },
+        "sale": {
+          "count": "7894",
+          "lastYearCount": "1236",
+          "increase": "↑ 12%",
+          "newPeopleDeal": "4660",
+          "averageDeal": "610"
+        },
+        "deal": {
+          "count": "6041",
+          "lastYearCount": "650",
+          "increase": "↓ -30%",
+          "newPeopleDeal": "354",
+          "averageDeal": "654"
+        }
+      },
+      {
+        "id": "1005",
+        "classificationAlcohol": "啤酒",
+        "region": "河北省",
+        "brand": "茅台",
+        "typeAromatic": "兼香型",
+        "time": "2022",
+        "lastYearCount": "1000",
+        "totalMonthly": {
+          "averageTotal": "10",
+          "increase": "↑ 10%"
+        },
+        "totalAveragePeopleMonthly": {
+          "averageTotal": "100",
+          "increase": "↑ 10%"
+        },
+        "brandTurnover": {
+          "totalCount": "500",
+          "brandTurnover": "60"
+        },
+        "sale": {
+          "count": "1000",
+          "lastYearCount": "900",
+          "increase": "↑ 10%",
+          "newPeopleDeal": "100",
+          "averageDeal": "10"
+        },
+        "deal": {
+          "count": "1000",
+          "lastYearCount": "800",
+          "increase": "↓ -10%",
+          "newPeopleDeal": "400",
+          "averageDeal": "100"
+        }
+      },
+      {
+        "id": "1006",
+        "classificationAlcohol": "黄酒",
+        "region": "贵州省",
+        "brand": "茅台",
+        "typeAromatic": "米香型",
+        "time": "2022",
+        "lastYearCount": "4231",
+        "totalMonthly": {
+          "averageTotal": "231",
+          "increase": "↑ 8%"
+        },
+        "totalAveragePeopleMonthly": {
+          "averageTotal": "456",
+          "increase": "↑ 3%"
+        },
+        "brandTurnover": {
+          "totalCount": "1235",
+          "brandTurnover": "463"
+        },
+        "sale": {
+          "count": "4613",
+          "lastYearCount": "456",
+          "increase": "↑ 12%",
+          "newPeopleDeal": "216",
+          "averageDeal": "456"
+        },
+        "deal": {
+          "count": "4536",
+          "lastYearCount": "4689",
+          "increase": "↓ -30%",
+          "newPeopleDeal": "897",
+          "averageDeal": "678"
+        }
+      },
+      {
+        "id": "1007",
+        "classificationAlcohol": "洋酒",
+        "region": "湖南省",
+        "brand": "五粮液",
+        "typeAromatic": "凤香型",
+        "time": "2022",
+        "lastYearCount": "946",
+        "totalMonthly": {
+          "averageTotal": "312",
+          "increase": "↑ 8%"
+        },
+        "totalAveragePeopleMonthly": {
+          "averageTotal": "897",
+          "increase": "↑ 3%"
+        },
+        "brandTurnover": {
+          "totalCount": "5499",
+          "brandTurnover": "324"
+        },
+        "sale": {
+          "count": "4563",
+          "lastYearCount": "131",
+          "increase": "↑ 12%",
+          "newPeopleDeal": "2646",
+          "averageDeal": "683"
+        },
+        "deal": {
+          "count": "964",
+          "lastYearCount": "358",
+          "increase": "↓ -30%",
+          "newPeopleDeal": "345",
+          "averageDeal": "365"
+        }
+      },
+      {
+        "id": "1008",
+        "classificationAlcohol": "收藏酒",
+        "region": "贵州省",
+        "brand": "国窖",
+        "typeAromatic": "特香型",
+        "time": "2022",
+        "lastYearCount": "3654",
+        "totalMonthly": {
+          "averageTotal": "789",
+          "increase": "↑ 8%"
+        },
+        "totalAveragePeopleMonthly": {
+          "averageTotal": "1321",
+          "increase": "↑ 3%"
+        },
+        "brandTurnover": {
+          "totalCount": "316",
+          "brandTurnover": "498"
+        },
+        "sale": {
+          "count": "7894",
+          "lastYearCount": "1236",
+          "increase": "↑ 12%",
+          "newPeopleDeal": "4660",
+          "averageDeal": "610"
+        },
+        "deal": {
+          "count": "6041",
+          "lastYearCount": "650",
+          "increase": "↓ -30%",
+          "newPeopleDeal": "354",
+          "averageDeal": "654"
+        }
+      },
+      {
+        "id": "1009",
+        "classificationAlcohol": "白酒",
+        "region": "四川省",
+        "brand": "剑南春",
+        "typeAromatic": "药香型",
+        "time": "2022",
+        "lastYearCount": "1000",
+        "totalMonthly": {
+          "averageTotal": "10",
+          "increase": "↑ 10%"
+        },
+        "totalAveragePeopleMonthly": {
+          "averageTotal": "100",
+          "increase": "↑ 10%"
+        },
+        "brandTurnover": {
+          "totalCount": "500",
+          "brandTurnover": "60"
+        },
+        "sale": {
+          "count": "1000",
+          "lastYearCount": "900",
+          "increase": "↑ 10%",
+          "newPeopleDeal": "100",
+          "averageDeal": "10"
+        },
+        "deal": {
+          "count": "1000",
+          "lastYearCount": "800",
+          "increase": "↓ -10%",
+          "newPeopleDeal": "400",
+          "averageDeal": "100"
+        }
+      },
+      {
+        "id": "10010",
+        "classificationAlcohol": "啤酒",
+        "region": "贵州省",
+        "brand": "泸州老窖",
+        "typeAromatic": "老白干香型",
+        "time": "2022",
+        "lastYearCount": "4231",
+        "totalMonthly": {
+          "averageTotal": "231",
+          "increase": "↑ 8%"
+        },
+        "totalAveragePeopleMonthly": {
+          "averageTotal": "456",
+          "increase": "↑ 3%"
+        },
+        "brandTurnover": {
+          "totalCount": "1235",
+          "brandTurnover": "463"
+        },
+        "sale": {
+          "count": "4613",
+          "lastYearCount": "456",
+          "increase": "↑ 12%",
+          "newPeopleDeal": "216",
+          "averageDeal": "456"
+        },
+        "deal": {
+          "count": "4536",
+          "lastYearCount": "4689",
+          "increase": "↓ -30%",
+          "newPeopleDeal": "897",
+          "averageDeal": "678"
+        }
+      },
+      {
+        "id": "10011",
+        "classificationAlcohol": "黄酒",
+        "region": "云南省",
+        "brand": "五粮液",
+        "typeAromatic": "米香型",
+        "time": "2022",
+        "lastYearCount": "946",
+        "totalMonthly": {
+          "averageTotal": "312",
+          "increase": "↑ 8%"
+        },
+        "totalAveragePeopleMonthly": {
+          "averageTotal": "897",
+          "increase": "↑ 3%"
+        },
+        "brandTurnover": {
+          "totalCount": "5499",
+          "brandTurnover": "324"
+        },
+        "sale": {
+          "count": "4563",
+          "lastYearCount": "131",
+          "increase": "↑ 12%",
+          "newPeopleDeal": "2646",
+          "averageDeal": "683"
+        },
+        "deal": {
+          "count": "964",
+          "lastYearCount": "358",
+          "increase": "↓ -30%",
+          "newPeopleDeal": "345",
+          "averageDeal": "365"
+        }
+      },
+      {
+        "id": "10012",
+        "classificationAlcohol": "葡萄酒",
+        "region": "贵州省",
+        "brand": "东方国宾",
+        "typeAromatic": "其他",
+        "time": "2022",
+        "lastYearCount": "3654",
+        "totalMonthly": {
+          "averageTotal": "789",
+          "increase": "↑ 8%"
+        },
+        "totalAveragePeopleMonthly": {
+          "averageTotal": "1321",
+          "increase": "↑ 3%"
+        },
+        "brandTurnover": {
+          "totalCount": "316",
+          "brandTurnover": "498"
+        },
+        "sale": {
+          "count": "7894",
+          "lastYearCount": "1236",
+          "increase": "↑ 12%",
+          "newPeopleDeal": "4660",
+          "averageDeal": "610"
+        },
+        "deal": {
+          "count": "6041",
+          "lastYearCount": "650",
+          "increase": "↓ -30%",
+          "newPeopleDeal": "354",
+          "averageDeal": "654"
+        }
+      }
+    ],
+    "total": 10
+  }
+}

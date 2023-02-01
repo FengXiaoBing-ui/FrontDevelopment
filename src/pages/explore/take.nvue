@@ -1,0 +1,430 @@
+<template>
+    <view class="content">
+        <live-pusher
+            id="livePusher"
+            ref="livePusher"
+            :style="{width: width + 'px',height:(height-80) + 'px'}"
+            :url="livepushurl"
+            :mode="mode"
+            :muted="false"
+            :enable-camera="true"
+            :auto-focus="true"
+            :beauty="beauty"
+            :whiteness="whiteness"
+            aspect="9:16"
+            enable-mic="true"
+            device-position="back"
+            @statechange="statechange"
+            @netstatus="netstatus"
+            @error="error">
+        </live-pusher>
+        <view class="close" @click="close">
+            <u-icon name="close" size="30" color="#ffffff"></u-icon>
+        </view>
+        <view class="rightBtn">
+            <view class="rightBtnBox" @click="switchCamera">
+                <u-icon name="reload" size="30" :color="flipColor"></u-icon>
+                <text :style="'color: '+flipColor+';font-size: 12px'">翻转</text>
+            </view>
+            <view class="rightBtnBox" @click="startCountDown">
+                <u-icon name="clock" size="30" :color="countDown==='倒计时'?'#ffffff':'red'"></u-icon>
+                <text :style="'color: '+(countDown==='倒计时'?'#ffffff':'red')+';font-size: 12px'">{{ countDown }}</text>
+            </view>
+            <view class="rightBtnBox" @click="flashSetting">
+                <u-icon name="pushpin" size="30" :color="isFlash?'red':'#ffffff'"></u-icon>
+                <text :style="'color: '+(isFlash?'red':'#ffffff')+';font-size: 12px'">闪光灯</text>
+            </view>
+        </view>
+        <view class="bottomBox">
+            <view style="display: flex;flex-direction: row;align-items: center;margin-bottom: 10px">
+                <text style="margin: 0 10px" @click="selectMode(index)" :style="index===selectIndex?'color:red':'color:white'" v-for="(item,index) in list1" :key="index">{{ item.name }}</text>
+            </view>
+            <view class="take" @click="snapshot"></view>
+        </view>
+        <view class="bottomBtn">
+            <text style="color: #FFFFFF">拍摄</text>
+            <text @click="album" style="color: #a7a7a7;margin-left: 10px">相册</text>
+        </view>
+    </view>
+</template>
+
+<script>
+let systemInfo = uni.getSystemInfoSync();
+export default {
+    data() {
+        return {
+            countDown:"倒计时",
+            isFlash:false,
+            flashColor:"#ffffff",
+            flipColor:"#ffffff",
+            selectIndex:0,
+            list1: [
+                {
+                    name: '拍摄',
+                },
+                {
+                    name: '视频',
+                }
+            ],
+            width: '350px',
+            height: '1500px',
+            mode: 'FHD', //流视频模式，可取值：SD（标清）, HD（高清）, FHD（超清)
+            beauty: 1, //美颜，取值范围 0-9（iOS取值范围为1） ，0 表示关闭
+            whiteness: 2, // 美白，取值范围 0-9（iOS取值范围为1） ，0 表示关闭
+            context: [],
+            livepushurl: '',
+            url: '',
+            showTime: true,
+            confirmContent: '是否确认上传当前录制？',
+            cancleContent: '是否确认退出当前录制？',
+            showConfirm: false,
+            showCancel: false,
+            id: null,
+            time: '00:00:00',
+            iStatusBarHeight: 32,
+            count: 0,
+        };
+    },
+    onReady() {
+        // 注意：需要在onReady中 或 onLoad 延时
+        this.context = uni.createLivePusherContext('livePusher', this);
+        //获取手机信息，并设置高度和宽度
+        try {
+            const res = uni.getSystemInfoSync();
+            this.width = res.windowWidth;
+            this.height = res.windowHeight;
+        } catch (e) {
+            throw Error(e)
+        }
+    },
+    onLoad() {
+
+    },
+    onShow() {
+        //开启预览
+        uni.getStorage({
+            key: 'livepushurl',
+            success:(res) =>{
+                console.log(res);
+                const { url,id} = res.data
+                this.livepushurl= url
+                this.id = id
+            }
+        });
+        this.init()
+        if(systemInfo.platform == 'android'){
+            this.startPreview();
+        }
+        this.startTime()
+    },
+    onHide() {
+        if(!this.showTime){
+            if (this.count <= 3) {
+                var page = getCurrentPages();
+                var prevPage = page[page.length - 2];
+                prevPage.$vm.closePusher(this.id);
+                uni.navigateBack({
+                    delta: 1,
+                });
+            }else{
+                this.stop()
+                var page = getCurrentPages();
+                var prevPage = page[page.length - 2];
+                prevPage.$vm.finishPusher(this.id);
+                uni.navigateBack({
+                    delta: 1,
+                });
+            }
+        }
+        this.isFlash = false
+        this.flash()
+    },
+    methods: {
+        init(){
+            this.isFlash = false
+            this.flash()
+            this.countDown = "倒计时"
+        },
+        album(){
+            plus.gallery.pick((path) => {
+                uni.navigateTo({
+                    url:"/pages/explore/takeEdit?img="+path
+                })
+            }, (err) => {
+                console.log(err);
+            },{filter:"image"});
+        },
+        close(){
+          uni.navigateBack({
+              delta:1
+          })
+        },
+        startCountDown(){
+            this.countDown = 3;
+            let timeout = setInterval(() => {
+                this.countDown--;
+                if (this.countDown<=1){
+                    clearInterval(timeout)
+                    this.snapshot()
+                }
+            },1000)
+        },
+        selectMode(index){
+            this.selectIndex = index
+        },
+        async geturl() {
+            try {
+                const res = await getUrl({
+                    order_id: this.order_id,
+                    type: this.type
+                })
+                this.url = res.push.rtmp
+                this.id = res.id
+                this.startTime()
+            } catch (e) {
+
+            }
+        },
+        startTime() {
+            const TIME_COUNT = 5;
+            if (!this.timer) {
+                this.count = TIME_COUNT;
+                this.timer = setInterval(() => {
+                    if (this.count > 0 && this.count <= TIME_COUNT) {
+                        this.count--;
+                    } else {
+                        this.showTime = false;
+                        clearInterval(this.timer)
+                        this.timer = null;
+                        this.start()
+                        if(systemInfo.platform == 'ios'){
+                            this.switchCamera()
+                        }
+                        this.timekeeping()
+                    }
+                }, 1000)
+            }
+        },
+        timekeeping() {
+            // var count = 0;
+            if (!this.timerInter) {
+                this.timerInter = setInterval(() => {
+                    var h = parseInt(this.count / 60 / 60);
+                    var m = parseInt(this.count / 60) % 60;
+                    var s = parseInt(this.count ) % 60;
+                    h = h < 10 ? '0' + h : h;
+                    m = m < 10 ? '0' + m : m;
+                    s = s < 10 ? '0' + s : s;
+                    this.time = h + ':' + m + ':' + s ;
+                    this.count += 1;
+                }, 1000)
+            }
+        },
+        statechange(e) {
+            console.log('状态变化事件:' + JSON.stringify(e));
+        },
+        netstatus(e) {
+            console.log('网络状态通知事件:' + JSON.stringify(e));
+        },
+        error(e) {
+            console.log('渲染错误事件:' + JSON.stringify(e));
+        },
+        start: function() {
+            this.context.start({
+                success: (a) => {
+                    console.log("livePusher.start:" + JSON.stringify(a));
+                },
+                error(e) {
+                    console.log(e);
+                }
+            });
+        },
+        flashSetting(){
+            this.isFlash = !this.isFlash
+        },
+        flash(){
+            try{
+                var main = plus.android.runtimeMainActivity();
+                var camera = main.getSystemService('camera');
+                var ids = plus.android.invoke(camera, 'getCameraIdList');
+                for (var i = 0; i < ids.length; i++) {
+                    var c = plus.android.invoke(camera, 'getCameraCharacteristics', ids[i]);
+                    var available = plus.android.invoke(c, 'get', plus.android.getAttribute(c, 'FLASH_INFO_AVAILABLE'));
+                    var facing = plus.android.invoke(c, 'get', plus.android.getAttribute(c, 'LENS_FACING'));
+                    if(null!=available&&available&&null!=facing&&1==facing){
+                        console.log('this.isFlash',this.isFlash);
+                        plus.android.invoke(camera, 'setTorchMode', ids[i], this.isFlash);
+                    }
+                }
+            }catch(e){
+                console.error('error @onTorch!!');
+            }
+        },
+        snapshot() {
+            let that = this
+            if (this.selectIndex===0){
+                this.context.snapshot({
+                    success: e => {
+                        // console.log('快照:' + JSON.stringify(e));
+                        that.stopPreview();
+                        uni.navigateTo({
+                            url:"/pages/explore/takeEdit?img="+e.message.tempImagePath
+                        })
+                    }
+                });
+            }
+            if (this.selectIndex===1){
+                this.start()
+            }
+        },
+        resume() {
+            this.context.resume({
+                success: a => {
+                    console.log('恢复推流:' + JSON.stringify(a));
+                }
+            });
+        },
+        pause() {
+            this.context.pause({
+                success: a => {
+                    console.log('暂停推流:' + JSON.stringify(a));
+                }
+            });
+        },
+        stop() {
+            this.context.stop({
+                success: a => {
+                    console.log('停止推流:' + JSON.stringify(a));
+                }
+            });
+        },
+        switchCamera() {
+            let that = this;
+            this.context.switchCamera({
+                success: a => {
+                    console.log('切换前后摄像头:' + JSON.stringify(a));
+                    if (that.flipColor==="#ffffff"){
+                        that.flipColor = "red"
+                    }else {
+                        that.flipColor = "#ffffff"
+                    }
+                }
+            });
+        },
+        startPreview() {
+            this.context.startPreview({
+                success: a => {
+                    console.log('开启摄像头预览:' + JSON.stringify(a));
+                }
+            });
+        },
+        stopPreview() {
+            this.context.stopPreview({
+                success: a => {
+                    console.log('关闭摄像头预览:' + JSON.stringify(a));
+                    this.flash();
+                }
+            });
+        },
+        showConfirmModal() {
+            if (this.count <= 3) {
+                uni.showToast({
+                    title: '上传视频不能低于3秒',
+                    icon: "none",
+                    duration: 2000,
+                });
+                return
+            }
+            uni.showModal({
+                title: '提示',
+                content: '是否确认上传当前录制？',
+                success: (res)=> {
+                    if (res.confirm) {
+                        clearInterval(this.timerInter);
+                        uni.showLoading({
+                            title: '提交中'
+                        })
+                        setTimeout(()=>{
+                            uni.hideLoading()
+                            this.stop()
+                            var page = getCurrentPages();
+                            var prevPage = page[page.length - 2];
+                            prevPage.$vm.finishPusher(this.id);
+                            uni.navigateBack({
+                                delta: 1,
+                            });
+                        },2000)
+                    } else if (res.cancel) {
+                        console.log('用户点击取消');
+                    }
+                }
+            });
+            // this.showConfirm = true
+        },
+        canceLlivePusher(){
+            uni.showModal({
+                title: '提示',
+                content: '是否确认退出当前录制？',
+                success:  (res)=> {
+                    if (res.confirm) {
+                        this.stop()
+                        var page = getCurrentPages();
+                        var prevPage = page[page.length - 2];
+                        prevPage.$vm.closePusher(this.id);
+                        uni.navigateBack({
+                            delta: 1,
+                        });
+                    } else if (res.cancel) {
+                        console.log('用户点击取消');
+                    }
+                },
+            })
+        }
+    }
+};
+</script>
+
+<style lang="scss" scoped>
+.close{
+    position: fixed;
+    left: 20px;
+    top: 50px;
+}
+.rightBtn{
+    position: fixed;
+    right: 20px;
+    top: 0;
+}
+.rightBtnBox{
+    margin-top: 50px;
+    display: flex;
+    align-items: center;
+}
+.bottomBox{
+    position: fixed;
+    bottom: 110px;
+    left: 0;
+    width: 750rpx;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.bottomBtn{
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    height: 80px;
+    width: 750rpx;
+    background-color: black;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+.take{
+    width: 160rpx;
+    height: 160rpx;
+    border-radius: 50%;
+    background-color: #FFFFFF;
+}
+</style>

@@ -1,0 +1,70 @@
+@import "theme";
+body{
+  color: $main-color-black !important;
+  background: $main-background-color !important;
+}
+//字体颜色
+.text-black{
+  color: $main-color-black;
+}
+.text-gray{
+  color: $main-color-gray;
+}
+.text-red{
+  color: $main-color-red;
+}
+.text-warning{
+  color: $main-color-origin;
+}
+
+//背景
+.bg-red{
+  background:$main-color-red ;
+}
+.bg-red-light{
+  background:rgba(229,77,66,0.1)
+}
+.bg-warning{
+  background: $main-color-origin;
+}
+
+.bg-white {
+  background-color: #ffffff;
+  color: #1D1D1D !important;
+}
+
+//边框
+.border{
+  border: solid 1px $main-border-color !important;
+}
+
+.border-tb {
+  border-top: solid 1px $main-border-color;
+  border-bottom: solid 1px $main-border-color;
+}
+
+.border-lr {
+  border-left: solid 1px $main-border-color;
+  border-right: solid 1px $main-border-color;
+}
+
+.border-top {
+  border-top: solid 1px $main-border-color;
+}
+
+.border-left {
+  border-left: solid 1px $main-border-color;
+}
+
+.border-right {
+  border-right: solid 1px $main-border-color;
+}
+
+.border-bottom {
+  border-bottom: solid 1px $main-border-color;
+}
+
+
+
+
+

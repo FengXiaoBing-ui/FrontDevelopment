@@ -1,0 +1,279 @@
+<template>
+  <view class="content">
+    <u-navbar :border="false" :fixed="true" :autoBack="true"
+              :style="{ '--CustomBar': CustomBar + 'px', '--StatusBar': StatusBar + 'px' }"
+              :safeAreaInsetTop="false">
+      <view slot="left" class="u-nav-slot">
+        <text style="font-size: 36rpx" class="cuIcon-back"></text>
+      </view>
+      <view slot="center" class="u-nav-slot">
+        <view class="text-xl text-bold">我的条码商品</view>
+        <view style="width:750rpx" class="search bg-white">
+          <view class="bg-white padding-lr">
+            <view class="flex align-center margin-top-sm bg-gray" style="border-radius: 4px">
+              <text class="cuIcon-search text-red"
+                    style="font-size: 20px; padding: 4px; margin-left: 4px"></text>
+              <input
+                  type="text"
+                  placeholder-class="text-gray text-sm"
+                  placeholder="请输入项目编号、名称进行搜索"
+                  confirm-type="search"
+              />
+            </view>
+            <!--产品列表导航-->
+            <u-tabs :itemStyle="isAfterSales?'width:33.34%;height:88rpx;white-space:nowrap;':'width:33.34%;height:88rpx;white-space:nowrap;'"
+                    activeStyle="font-size:32rpx;font-weight:bold"
+                    inactiveStyle="color:gray;font-size:26rpx" lineColor="red" :list="tabList"
+
+                    @click="tabSelect"></u-tabs>
+          </view>
+        </view>
+      </view>
+    </u-navbar>
+
+    <view>
+      <view class="padding-sm contentBox"
+            :style="{ '--CustomBar': CustomBar + 'px', '--StatusBar': StatusBar + 'px' }">
+        <view class="flex justify-between margin-bottom-sm">
+          <view class="flex align-center" @click="shows = true">
+            <view class="text-bold text-xl">9月</view>
+            <view class="cuIcon-unfold" style="width: 20px;"></view>
+          </view>
+          <view @click="show = true" class="flex text-gray">
+            <view class="cuIcon-filter" style="font-size: 16px"></view>
+            <text>筛选·已选0</text>
+          </view>
+        </view>
+
+        <view class="margin-top-sm padding-lr-xs" @click="goTo(item.status)" v-for="(item,index) in currentOrderList" v-if="isAfterSales==true">
+          <view class="bg-white padding-lr-sm padding-tb" style="border: 1px solid rgba(229,77,66,0.2)">
+            <view class="flex justify-between align-start">
+              <view>
+                <view class="text-center"
+                      :class="`${item.status===1?'bg-blue':'bg-green'}`"
+                      style="width: 100rpx;height: 40rpx;border-radius: 10rpx 10rpx 0 10rpx">
+                  {{transStatus(item.status)}}</view>
+              </view>
+              <view>
+                <view class="text-bold text-lg">东方国宾·尊致酒条码招商</view>
+                <view class="text-gray text-df margin-top-xs">项目编号：1546545142312</view>
+                <view class="margin-top-xs flex align-center">
+                  <view class="cu-tag light bg-orange sm">平台托管</view>
+                  <view class="margin-left-sm cu-tag light bg-orange sm">收益率:16.5%~22.5%</view>
+                </view>
+              </view>
+              <view>
+                <image src="http://124.220.219.72:8084/static/productDetails/Slice%201.png" style="width: 125rpx;height: 125rpx;border-radius: 10rpx"></image>
+              </view>
+            </view>
+
+            <view class="padding-lr-sm padding-tb margin-top-sm text-sm" style=" background-color: #F7F7FB">
+              <view class="flex align-center">
+                <view class="w50 flex align-center">
+                  <view class="cuIcon-goodsfavor"></view>
+                  <view class="text-gray margin-left-xs" style="width: 116rpx">商品总量:</view>
+                  <view class="margin-left-xs">21000瓶</view>
+                </view>
+                <view class="w50 flex align-center">
+                  <view class="cuIcon-recharge"></view>
+                  <view class="text-gray margin-left-xs" style="width: 116rpx">代理价:</view>
+                  <view class="margin-left-xs">¥256.00</view>
+                </view>
+              </view>
+              <view class="flex align-center margin-top-sm">
+                <view class="w50 flex align-center">
+                  <view class="cuIcon-sponsor"></view>
+                  <view class="text-gray margin-left-xs" style="width: 116rpx">商品总额:</view>
+                  <view class="margin-left-xs text-orange">5000000元</view>
+                </view>
+                <view class="w50 flex align-center">
+                  <view class="cuIcon-peoplelist"></view>
+                  <view class="text-gray margin-left-xs" style="width: 116rpx">预计收益:</view>
+                  <view class="margin-left-xs text-red">6000000元</view>
+                </view>
+              </view>
+            </view>
+
+            <view class="margin-top">
+              <view class="text-lg margin-bottom-sm">当前销售</view>
+
+              <view class="flex align-center">
+                <fxbSlider :progress="progress"></fxbSlider>
+              </view>
+
+              <view class="flex justify-between align-center margin-top">
+                <view class="flex align-center text-sm">
+                  <view class="cuIcon-my"></view>
+                  <view class="margin-lr-xs">当前成交量：</view>
+                  <view class="text-orange">12000瓶</view>
+                </view>
+                <view class="flex align-center text-sm">
+                  <view class="cuIcon-recharge"></view>
+                  <view class="margin-lr-xs">当前成交额：</view>
+                  <view class="text-red">¥2500000.00</view>
+                </view>
+              </view>
+            </view>
+          </view>
+        </view>
+
+      </view>
+    </view>
+    <u-popup :show="show" mode="right" @close="close" @open="open">
+      <view class="scrollViewBox"
+            :style="'padding-top: ' + (CustomBar) + 'px;transform:rotate(360deg);'">
+        <scroll-view class="scrollView" scroll-y="true"
+                     style="{ '--ScreenHeight': (ScreenHeight-(CustomBar+StatusBar)) + 'px' }">
+          <ScreenAlcohol title="按时间" @getInfo="getInfo" :alcoholList="dateList"></ScreenAlcohol>
+        </scroll-view>
+        <view class="flex align-center justify-around">
+          <button style="width: 45%" class="cu-btn u-border bg-white radius margin-right-sm">重置</button>
+          <button style="width: 45%" class="cu-btn bg-red radius" @click="close">确定</button>
+        </view>
+      </view>
+    </u-popup>
+    <u-calendar :show="shows" :mode="mode" @confirm="confirm" :closeOnClickOverlay="true" @close="closes">
+
+    </u-calendar>
+  </view>
+</template>
+
+<script>
+import ScreenAlcohol from "/src/pages/agent/components/fxb-screen-alcohol";
+import fxbSlider from "/src/components/fxb/fxb-slider"
+export default {
+  name: "barcodeCommodity",
+  components: { ScreenAlcohol,fxbSlider },
+  data() {
+    return {
+      progress:50,
+      dateList: [
+        "1个月内", "3个月内", "6个月内", "今年", "2021年", "2020年", "2019年", "2018年", "2017年"
+      ],
+      changes:true,
+      shows: false,
+      mode: 'range',
+      isAfterSales: true,
+      show: false,
+      currentOrderList: [],
+      tabList: [
+        {
+          name: "全部"
+        },
+        {
+          name: "销售中"
+        },
+        {
+          name: "已售罄"
+        }
+      ],
+      tenderList:[
+        {
+          status:1,
+        },
+        {
+          status:2,
+        },
+      ],
+    };
+  },
+
+  onLoad(options) {
+    this.currentOrderList = this.tenderList;
+    if (options.isAfterSales) {
+      this.isAfterSales = options.isAfterSales;
+    }
+  },
+  methods: {
+    tabSelect(e) {
+      this.tabIndex = e.index;
+      this.tempArr = [
+        "item",
+        "item.status === 1",
+        "item.status === 2",];
+      this.currentOrderList = this.tenderList.filter(item => {
+        return eval(this.tempArr[e.index]);
+
+      });
+    },
+    transStatus(status) {
+      const tempArr = ["销售中", "已售罄",];
+      return tempArr[status - 1];
+    },
+    switchOrder() {
+      this.isAfterSales = !this.isAfterSales;
+      this.changes=false
+      this.$nextTick(()=>{
+        this.changes=true;
+      });
+    },
+    confirm(e) {
+      console.log(e);
+      this.closes();
+    },
+    getInfo(e) {
+      this.msg = e;
+    },
+    open() {
+      // console.log('open');
+      this.show = true;
+    },
+    close() {
+      this.show = false;
+      // console.log('close');
+    },
+    closes(){
+      this.shows = false;
+    },
+    goTo(status){
+      uni.navigateTo({
+        url: "/pages/admin/barcodeCommodity/barcodeDetails?status=" + status
+      });
+    },
+  },
+};
+</script>
+
+<style lang="scss" scoped>
+/deep/ .u-navbar {
+  .u-navbar__content {
+    height: var(--CustomBar) !important;
+    padding-top: var(--StatusBar);
+    border-bottom: 0;
+
+    .u-navbar__content__left,
+    .u-navbar__content__right {
+      margin-top: var(--StatusBar);
+    }
+  }
+}
+
+.search {
+  position: fixed;
+  width: 100%;
+  top: var(--CustomBar-1) !important;
+  left: 0;
+}
+
+.contentBox {
+  position: relative;
+  top: calc(var(--StatusBar) + 250rpx);
+  padding-bottom: 40rpx;
+}
+
+.scrollViewBox {
+  width: 600rpx;
+  box-sizing: border-box;
+
+  .scrollView {
+    padding-bottom: 104rpx;
+  }
+
+  .botBtn {
+    width: 100%;
+    position: fixed;
+    bottom: 0;
+    right: 0;
+  }
+}
+</style>

@@ -1,0 +1,1310 @@
+{
+  "easycom": {
+    "^u-(.*)": "uview-ui/components/u-$1/u-$1.vue",
+    "^w-(.*)": "@/uni_modules/wmf-code/components/w-$1/w-$1.vue"//二维码条形码的配置 如果是npm方式使用 @uni-ui/code-ui/components/w-$1/index.vue
+  },
+  "globalStyle": {
+    "navigationStyle": "custom",
+    "navigationBarTextStyle": "black",
+    "app-plus": {
+      "animationType": "fade-in",
+      "animationDuration": 200
+    }
+  },
+  "pages": [
+    //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
+    {
+      "path": "pages/index/splash"
+    },
+    {
+      "path": "pages/index/index",
+      "style": {
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
+      "path": "pages/login/login"
+    },
+    {
+      "path": "pages/payResult/payResult"
+    },
+    //酒数据云
+    {
+      "path": "pages/index/wineDataCloud/wineDataCloud"
+    },
+    //推荐
+    {
+      "path": "pages/recommend/recommend"
+    },
+    //好酒列表
+    {
+      "path": "pages/agent/commodityList"
+    },
+    {
+      "path": "pages/agent/commodityListScreen"
+    },
+    {
+      "path": "pages/agent/brandScreen"
+    },
+    //缴纳会员费
+    {
+      "path": "pages/memberPayment/memberAgreement"
+    },
+    {
+      "path": "pages/memberPayment/memberPay"
+    },
+    {
+      "path": "pages/memberPayment/payVoucher"
+    },
+    //代理产品
+    {
+      "path": "pages/agentProducts/agentProducts"
+    },
+    {
+      "path": "pages/agentProducts/settlementMethod"
+    },
+    {
+      "path": "pages/agentProducts/payContractMoney"
+    },
+    {
+      "path": "pages/agentProducts/agencyContract"
+    },
+    {
+      "path": "pages/agentProducts/policyAgency"
+    },
+    {
+      "path": "pages/agentProducts/sign"
+    },
+    //系统帮选酒页
+    {
+      "path": "pages/systemRecommend/systemRecommend"
+    },
+    {
+      "path": "pages/systemRecommend/recommendList"
+    },
+    //热门活动页
+    {
+      "path": "pages/hotActivity/hotActivity"
+    },
+    {
+      "path": "pages/hotActivity/activityDetails"
+    },
+    {
+      "path": "pages/hotActivity/appActivityDetails"
+    },
+    {
+      "path": "pages/hotActivity/discuss"
+    },
+    {
+      "path": "pages/hotActivity/hotDetails"
+    },
+    {
+      "path": "pages/hotActivity/appraiseDetails"
+    },
+    {
+      "path": "pages/hotActivity/enroll"
+    },
+    {
+      "path": "pages/hotActivity/pay"
+    },
+    //成交量排行榜
+    {
+      "path": "pages/turnoverRanking/turnoverRanking"
+    },
+    // 管理
+    {
+      "path": "pages/admin/administrationIndex"
+    },
+    {
+      "path": "pages/admin/allAdministration"
+    },
+    {
+      "path": "pages/admin/functionManagement"
+    },
+    {
+      "path": "pages/admin/functionCharge"
+    },
+    {
+      "path": "pages/admin/functionChargePay"
+    },
+    //采购进货
+    {
+      "path": "pages/admin/purchasingManagement/Purchase"
+    },
+    {
+      "path": "pages/admin/purchasingManagement/order"
+    },
+    //售后
+    {
+      "path": "pages/admin/afterSales/afterSalesDetails"
+    },
+    {
+      "path": "pages/admin/afterSales/appointmentPickup"
+    },
+    // 样品订单
+    {
+      "path": "pages/admin/orderSample/orderSampleIndex"
+    },
+    {
+      "path": "pages/admin/orderSample/afterMarket"
+    },
+    {
+      "path": "pages/admin/orderSample/refund"
+    },
+    {
+      "path": "pages/admin/orderSample/refundDetails"
+    },
+    {
+      "path": "pages/admin/orderSample/payOrder"
+    },
+    {
+      "path": "pages/admin/orderSample/refundResult"
+    },
+    // 我要提货
+    {
+      "path": "pages/admin/takeDelivery/takeDeliveryIndex"
+    },
+    // 我的云库存
+    {
+      "path": "pages/admin/cloudInventory/cloudInventoryIndex"
+    },
+    {
+      "path": "pages/admin/cloudInventory/cloudInventoryRecords"
+    },
+    {
+      "path": "pages/admin/cloudInventory/inventoryDetails"
+    },
+    // 换货申请
+    {
+      "path": "pages/admin/exchangeApplication/exchangeApplicationIndex"
+    },
+    // 销售管理
+    //	客户管理
+    {
+      "path": "pages/admin/customerManagement/customerManagementIndex"
+    },
+    {
+      "path": "pages/admin/customerManagement/customerDetails"
+    },
+    {
+      "path": "pages/admin/customerManagement/transactionRecord"
+    },
+    {
+      "path": "pages/admin/customerManagement/transactionStatistics"
+    },
+    {
+      "path": "pages/admin/customerManagement/addCustomer"
+    },
+    //    订单统计
+    {
+      "path": "pages/admin/customerManagement/OrderStatistics"
+    },
+    //    商品管理
+    {
+      "path": "pages/admin/adminProduct/productList"
+    },
+    {
+      "path": "pages/admin/adminProduct/drafts"
+    },
+    {
+      "path": "pages/admin/adminProduct/addProduct"
+    },
+    {
+      "path": "pages/admin/adminProduct/addImg"
+    },
+    {
+      "path": "pages/admin/adminProduct/productParameter"
+    },
+    {
+      "path": "pages/admin/adminProduct/productDetails"
+    },
+    {
+      "path": "pages/admin/adminProduct/foodSafety"
+    },
+    //    代理政策
+    {
+      "path": "pages/admin/policyAgency/policyList"
+    },
+    {
+      "path": "pages/admin/policyAgency/agentDetails"
+    },
+    {
+      "path": "pages/admin/policyAgency/policyDetails"
+    },
+    {
+      "path": "pages/admin/policyAgency/releasePolicy"
+    },
+    {
+      "path": "pages/admin/policyAgency/addPolicy"
+    },
+    {
+      "path": "pages/admin/policyAgency/selectProduct"
+    },
+    {
+      "path": "pages/admin/policyAgency/addAgentLevel"
+    },
+    {
+      "path": "pages/admin/policyAgency/addCommission"
+    },
+    {
+      "path": "pages/admin/policyAgency/amountComponent"
+    },
+    {
+      "path": "pages/admin/policyAgency/settingAgentPeopleCount"
+    },
+    //    一键发货
+    {
+      "path": "pages/admin/oneClickDelivery/oneClickDeliveryList"
+    },
+    {
+      "path": "pages/admin/oneClickDelivery/orderDetail"
+    },
+    {
+      "path": "pages/admin/oneClickDelivery/willDeliverGoods"
+    },
+    {
+      "path": "pages/admin/oneClickDelivery/myCustomer"
+    },
+    {
+      "path": "pages/admin/oneClickDelivery/returnAndExchange"
+    },
+    {
+      "path": "pages/admin/oneClickDelivery/returnAndExchangeDetails"
+    },
+
+    {
+      "path": "pages/admin/oneClickDelivery/productList"
+    },
+    {
+      "path": "pages/admin/oneClickDelivery/exchangeDetail"
+    },
+    {
+      "path": "pages/admin/goodsSales/goodsExchangeDetails"
+    },
+    {
+      "path": "pages/admin/goodsSales/appointmentPick"
+    },
+    {
+      "path": "pages/admin/oneClickDelivery/addCustomer"
+    },
+    //    合同管理
+    {
+      "path": "pages/admin/adminContract/index"
+    },
+    {
+      "path": "pages/admin/adminContract/agentAudit"
+    },
+    {
+      "path": "pages/admin/adminContract/agentAuditDetails"
+    },
+    {
+      "path": "pages/admin/adminContract/agentBusinessLicense"
+    },
+    {
+      "path": "pages/admin/adminContract/agencyIDInfo"
+    },
+    {
+      "path": "pages/admin/adminContract/createContract"
+    },
+    {
+      "path": "pages/admin/adminContract/createContractTwo"
+    },
+    {
+      "path": "pages/admin/adminContract/bondPay"
+    },
+    {
+      "path": "pages/admin/adminContract/surePay"
+    },
+    {
+      "path": "pages/admin/adminContract/instalments"
+    },
+    {
+      "path": "pages/admin/adminContract/contractDetail"
+    },
+    {
+      "path": "pages/admin/adminContract/contractPDF"
+    },
+    {
+      "path": "pages/admin/adminContract/contractPunish"
+    },
+    {
+      "path": "pages/admin/adminContract/contractErrorReason"
+    },
+    {
+      "path": "pages/admin/adminContract/appealReview"
+    },
+    {
+      "path": "pages/admin/adminContract/appeal"
+    },
+    {
+      "path": "pages/admin/adminContract/handleProgress"
+    },
+    {
+      "path": "pages/admin/applicationAgentList/index"
+    },
+    {
+      "path": "pages/admin/applicationAgentList/details"
+    },
+    {
+      "path": "pages/admin/applicationAgentList/payContractMoney"
+    },
+    //    合同发货(服务商)
+    //      发货申请
+    {
+      "path": "pages/admin/contractDeliverGoods/deliverGoodsApply"
+    },
+    {
+      "path": "pages/admin/contractDeliverGoods/deliverGoodsToExamine"
+    },
+    {
+      "path": "pages/admin/contractDeliverGoods/toExamineFailed"
+    },
+    //      合同发货订单
+    {
+      "path": "pages/admin/contractDeliverGoods/order"
+    },
+    {
+      "path": "pages/admin/contractDeliverGoods/orderDetails"
+    },
+    //合同发货(代理商)
+    //    发货申请
+    {
+      "path": "pages/admin/agentContractDeliverGoods/deliverGoodsApply"
+    },
+    {
+      "path": "pages/admin/agentContractDeliverGoods/deliverGoodsToExamine"
+    },
+    {
+      "path": "pages/admin/agentContractDeliverGoods/productList"
+    },
+    //    合同发货订单
+    {
+      "path": "pages/admin/agentContractDeliverGoods/order"
+    },
+    {
+      "path": "pages/admin/agentContractDeliverGoods/contractDeliveryDetails"
+    },
+    {
+      "path": "pages/admin/agentContractDeliverGoods/payForGoods"
+    },
+    {
+      "path": "pages/admin/agentContractDeliverGoods/sunOrderDetails"
+    },
+    //退换货审核
+    {
+      "path": "pages/admin/returnAudit/index"
+    },
+    {
+      "path": "pages/admin/returnAudit/details"
+    },
+    //    我的代理商
+    {
+      "path": "pages/admin/myAgent/index"
+    },
+    {
+      "path": "pages/admin/myAgent/agentInfo"
+    },
+    {
+      "path": "pages/admin/myAgent/settingInfo"
+    },
+    {
+      "path": "pages/admin/myAgent/selectTeam"
+    },
+    {
+      "path": "pages/admin/myAgent/orderInfo"
+    },
+    //    发票管理
+    {
+      "path": "pages/admin/invoiceAdmin/index"
+    },
+    {
+      "path": "pages/admin/invoiceAdmin/noInvoicingDetails"
+    },
+    {
+      "path": "pages/admin/invoiceAdmin/invoicing"
+    },
+    //    品鉴会申请
+    {
+      "path": "pages/admin/tastingMeeting/index"
+    },
+    {
+      "path": "pages/admin/tastingMeeting/details"
+    },
+    {
+      "path": "pages/admin/tastingMeeting/submitApplication"
+    },
+    {
+      "path": "pages/admin/tastingMeeting/contractProductList"
+    },
+    {
+      "path": "pages/admin/tastingMeeting/payment"
+    },
+    //品鉴会管理
+    {
+      "path": "pages/admin/tastingMeeting/adminIndex"
+    },
+    {
+      "path": "pages/admin/tastingMeeting/adminDetails"
+    },
+    {
+      "path": "pages/admin/tastingMeeting/applyReimbursement"
+    },
+    {
+      "path": "pages/admin/tastingMeeting/selectTastingMeeting"
+    },
+    //我参与的品鉴会
+    {
+      "path": "pages/admin/tastingMeeting/participatingTastingMeeting/participatingTastingMeetingIndex"
+    },
+    {
+      "path": "pages/admin/tastingMeeting/participatingTastingMeeting/particpatingDetails"
+    },
+    {
+      "path": "pages/admin/tastingMeeting/participatingTastingMeeting/payment"
+    },
+    {
+      "path": "pages/admin/tastingMeeting/participatingTastingMeeting/applyForRefund"
+    },
+    {
+      "path": "pages/admin/tastingMeeting/participatingTastingMeeting/afterSalesDetails"
+    },
+    //品鉴会推广details
+    {
+      "path": "pages/admin/tastingMeeting/promoteAfterSalesDetails"
+    },
+//    营销管理
+    {
+      "path": "pages/admin/marketing/bannerAdmin"
+    },
+    {
+      "path": "pages/admin/marketing/payment"
+    },
+    {
+      "path": "pages/admin/marketing/bannerDetails"
+    },
+    {
+      "path": "pages/admin/marketing/brandDetails"
+    },
+    {
+      "path": "pages/admin/marketing/activityDetails"
+    },
+    {
+      "path": "pages/admin/marketing/addActivity"
+    },
+    {
+      "path": "pages/admin/marketing/selectProduct"
+    },
+    {
+      "path": "pages/admin/marketing/addBrand"
+    },
+    {
+      "path": "pages/admin/marketing/addBanner"
+    },
+    {
+      "path": "pages/admin/marketing/appraiseActivityDetails"
+    },
+    {
+      "path": "pages/admin/marketing/releaseActivity"
+    },
+    {
+      "path": "pages/admin/marketing/enrollList"
+    },
+    {
+      "path": "pages/admin/marketing/enrollDetails"
+    },
+    //    补货申请
+    {
+      "path": "pages/admin/replenishment/replenishmentList"
+    },
+    {
+      "path": "pages/admin/replenishment/addReplenishment"
+    },
+    {
+      "path": "pages/admin/replenishment/replenishmentDetails"
+    },
+    {
+      "path": "pages/admin/replenishment/contractProductList"
+    },
+    {
+      "path": "pages/admin/replenishment/sunOrderDetails"
+    },
+    {
+      "path": "pages/admin/replenishment/payLoan"
+    },
+    //    招标
+    {
+      "path": "pages/admin/tender/tenderIndex"
+    },
+    {
+      "path": "pages/admin/tender/selectSuccessfulBidder"
+    },
+    {
+      "path": "pages/admin/tender/successfulBidderDetails"
+    },
+    {
+      "path": "pages/admin/tender/tenderDetails"
+    },
+    {
+      "path": "pages/admin/tender/tenderIndexTwo"
+    },
+    {
+      "path": "pages/admin/tender/barCodeProduct"
+    },
+    {
+      "path": "pages/admin/tender/releaseTender"
+    },
+    {
+      "path": "pages/admin/tender/productDetailsForm"
+    },
+    {
+      "path": "pages/admin/tender/details"
+    },
+    {
+      "path": "pages/admin/tender/productDetails"
+    },
+    {
+      "path": "pages/admin/tender/submittedSuccessfully"
+    },
+    {
+      "path": "pages/admin/tender/salesRecords"
+    },
+    {
+      "path": "pages/admin/tender/recordDetails"
+    },
+    {
+      "path": "pages/admin/tender/selectEnroll"
+    },
+    {
+      "path": "pages/admin/tender/cooperationAgreement"
+    },
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    {
+      "path": "pages/admin/myPartnershipService/index"
+    },
+    {
+      "path": "pages/admin/myPartnershipService/partnershipInfo"
+    },
+    {
+      "path": "pages/admin/myPartnershipService/fixInfo"
+    },
+    {
+      "path": "pages/admin/myPartnershipService/partnershipOrderInfo"
+    },
+    {
+      "path": "pages/admin/myPartnershipService/salesStatistics"
+    },
+    // 数据统计代理商
+    {
+      "path": "pages/admin/dataForAgent/dataCountIndex"
+    },
+    {
+      "path": "pages/admin/dataForAgent/selectContract"
+    },
+    // 数据统计服务商
+    {
+      "path": "pages/admin/dataForService/replenishmentRecord"
+    },
+    {
+      "path": "pages/admin/dataForService/proxyList"
+    },
+    {
+      "path": "pages/admin/dataForService/dataCountIndex"
+    },
+    {
+      "path": "pages/admin/dataForService/selectGoods"
+    },
+    {
+      "path": "pages/admin/dataForService/selectActivity"
+    },
+    {
+      "path": "pages/admin/dataForService/selectPolicy"
+    },
+    //   返佣服务商对代理商
+    {
+      "path": "pages/admin/returnCommissionService/forAgent/returnAdmin"
+    },
+    {
+      "path": "pages/admin/returnCommissionService/forAgent/detailsNoCheck"
+    },
+    {
+      "path": "pages/admin/returnCommissionService/forAgent/detailsNoPass"
+    },
+    {
+      "path": "pages/admin/returnCommissionService/forAgent/detailsIn"
+    },
+    {
+      "path": "pages/admin/returnCommissionService/forAgent/detailsFinish"
+    },
+    {
+      "path": "pages/admin/returnCommissionService/forAgent/payForReturnCommission"
+    },
+    {
+      "path": "pages/admin/returnCommissionService/forAgent/sureBackGoods"
+    },
+    //   返佣服务商对个人合作
+    {
+      "path": "pages/admin/returnCommissionService/forPersonal/returnAdmin"
+    },
+    {
+      "path": "pages/admin/returnCommissionService/forPersonal/detailsNoCheck"
+    },
+    {
+      "path": "pages/admin/returnCommissionService/forPersonal/payForReturnCommission"
+    },
+    {
+      "path": "pages/admin/returnCommissionService/forPersonal/detailsNoPass"
+    },
+    {
+      "path": "pages/admin/returnCommissionService/forPersonal/detailsIn_Finish"
+    },
+    {
+      "path": "pages/admin/returnCommissionService/forAgent/payForReturnCommission"
+    },
+    {
+      "path": "pages/admin/returnCommissionService/editorReason"
+    },
+    {
+      "path": "pages/admin/returnCommissionService/serviceAdminIndex"
+    },
+    //   返佣代理商
+    {
+      "path": "pages/admin/returnCommissionAgent/returnAdmin"
+    },
+    {
+      "path": "pages/admin/returnCommissionAgent/applyCommission"
+    },
+    {
+      "path": "pages/admin/returnCommissionAgent/detailsNoCheck"
+    },
+    {
+      "path": "pages/admin/returnCommissionAgent/detailsNoPass"
+    },
+    {
+      "path": "pages/admin/returnCommissionAgent/detailsIn"
+    },
+    {
+      "path": "pages/admin/returnCommissionAgent/detailsFinish"
+    },
+    {
+      "path": "pages/admin/returnCommissionAgent/selectContract"
+    },
+    // 返佣管理 个人
+    {
+      "path": "pages/admin/returnCommissionPersonal/returnAdmin"
+    },
+    {
+      "path": "pages/admin/returnCommissionPersonal/applyCommission"
+    },
+    {
+      "path": "pages/admin/returnCommissionPersonal/detailsNoCheck"
+    },
+    {
+      "path": "pages/admin/returnCommissionPersonal/detailsNoPass"
+    },
+    {
+      "path": "pages/admin/returnCommissionPersonal/detailsIn"
+    },
+    {
+      "path": "pages/admin/returnCommissionPersonal/detailsFinish"
+    },
+
+//我的分期  代
+    {
+      "path": "pages/admin/myInstallment/myInstallmentDetails"
+    },
+
+    {
+      "path": "pages/admin/myInstallment/billingDetails"
+    },
+
+
+
+
+
+    {
+      "path": "pages/admin/orderAdmin/orderAdmin"
+    },
+    {
+      "path": "pages/admin/orderAdmin/orderDetails"
+    },
+    {
+      "path": "pages/admin/orderAdmin/afterSales"
+    },
+    {
+      "path": "pages/admin/versionManagement/adminIstration"
+    },
+    {
+      "path": "pages/admin/versionManagement/manageBranches"
+    },
+    {
+      "path": "pages/admin/versionManagement/application"
+    },
+    {
+      "path": "pages/admin/versionManagement/functionDisplay"
+    },
+    {
+      "path": "pages/admin/versionManagement/paymentService"
+    },
+    {
+      "path": "pages/admin/versionManagement/customized"
+    },
+    {
+      "path": "pages/admin/returnExchange/returnOne"
+    },
+    {
+      "path": "pages/admin/contractList/contractList"
+    },
+    {
+      "path": "pages/admin/contractList/returnList"
+    },
+    {
+      "path": "pages/admin/tender/investmentDetails"
+    },
+    {
+      "path": "pages/admin/tender/confirmTender"
+    },
+    {
+      "path": "pages/admin/tender/myTender"
+    },
+    {
+      "path": "pages/admin/tender/tenderStatus"
+    },
+    {
+      "path": "pages/admin/tender/tenderPay"
+    },
+    {
+      "path": "pages/admin/tender/uploadTender"
+    },
+    {
+      "path": "pages/admin/tender/depositPaid"
+    },
+    {
+      "path": "pages/admin/tender/contractPayment"
+    },
+    {
+      "path": "pages/admin/barcodeCommodity/barcodeCommodity"
+    },
+    {
+      "path": "pages/admin/barcodeCommodity/barcodeDetails"
+    },
+    {
+      "path": "pages/admin/barcodeCommodity/receiptRecord"
+    },
+    {
+      "path": "pages/admin/tender/crowdfundingDetails"
+    },
+    {
+      "path": "pages/admin/tender/payContract"
+    },
+    {
+      "path": "pages/admin/tender/attractInvestment"
+    },
+    {
+      "path": "pages/admin/tender/detailsList"
+    },
+    {
+      "path": "pages/admin/tender/wantCrowdfunding"
+    },
+    {
+      "path": "pages/admin/tender/commodityManagement"
+    },
+    {
+      "path": "pages/admin/tender/collaborator"
+    },
+    {
+      "path": "pages/hotActivity/hotEvents"
+    },
+    {
+      "path": "pages/admin/orderAdmin/cooperativePartner"
+    },
+    {
+      "path": "pages/admin/orderAdmin/cooperationOne"
+    },
+    {
+      "path": "pages/admin/orderAdmin/cooperationTwo"
+    },
+    {
+      "path": "pages/admin/orderOne/orderOne"
+    },
+    {
+      "path": "pages/admin/orderOne/selectItem"
+    },
+    {
+      "path": "pages/admin/orderOne/fillOrder"
+    },
+    {
+      "path": "pages/admin/orderOne/submitList"
+    },
+    {
+      "path": "pages/admin/orderOne/selectAddress"
+    },
+    {
+      "path": "pages/admin/orderOne/orderTwo"
+    },
+    {
+      "path": "pages/admin/orderOne/orderThree"
+    },
+    {
+      "path": "pages/admin/orderOne/afterSales"
+    },
+    {
+      "path": "pages/admin/orderOne/refund"
+    },
+    {
+      "path": "pages/admin/distributionPartner/distributionPartner"
+    },
+    {
+      "path": "pages/admin/distributionPartner/partnerDetails"
+    },
+    {
+      "path": "pages/admin/distributionPartner/orderRecord"
+    },
+    {
+      "path": "pages/admin/distributionPartner/partnerInformation"
+    },
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // 我的订单-----个人合作伙伴
+    {
+      "path": "pages/admin/myOrderForPersonal/myOrderIndex"
+    },
+    {
+      "path": "pages/admin/myOrderForPersonal/selectGoods"
+    },
+    {
+      "path": "pages/admin/myOrderForPersonal/myOrder"
+    },
+    {
+      "path": "pages/admin/myOrderForPersonal/selectHarvestAddress"
+    },
+    {
+      "path": "pages/admin/myOrderForPersonal/addHarvestAddress"
+
+    },
+    {
+      "path": "pages/admin/myOrderForPersonal/paymentMethod"
+
+    },
+    {
+      "path": "pages/admin/myOrderForPersonal/afterSalesDetails"
+    },
+    {
+      "path": "pages/admin/myOrderForPersonal/appointmentPickup"
+    },
+    {
+      "path": "pages/admin/myOrderForPersonal/myOrderDetails"
+    },
+
+
+
+
+
+
+
+    //    积分
+
+    {
+      "path": "pages/admin/integralForPerson/integralIndex"
+    },
+    {
+      "path": "pages/admin/integralForPerson/integralInfo"
+    },
+    {
+      "path": "pages/admin/integralForPerson/integralRule"
+    },
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    //    wjx
+    //      我的、账户、页面
+    {
+      "path": "pages/my/myIndex",
+      "style": {
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
+      "path": "pages/my/baseInfo/baseInfoIndex"
+    },
+    {
+      "path": "pages/my/baseInfo/thirdBIndIndex"
+    },
+    {
+      "path": "pages/my/baseInfo/realNameIndex"
+    },
+    {
+      "path": "pages/my/baseInfo/phoneEditorIndex"
+    },
+    {
+      "path": "pages/my/baseInfo/QRcodeIndex"
+    },
+    {
+      "path": "pages/my/baseInfo/bindAlipay"
+    },
+    {
+      "path": "pages/my/personManagement/personManagementIndex"
+    },
+    {
+      "path": "pages/my/personManagement/addPerson"
+    },
+    {
+      "path": "pages/my/personManagement/memberManagement"
+    },
+    //    支付设置开始
+    {
+      "path": "pages/my/paySetting/paySettingIndex"
+    },
+    {
+      "path": "pages/my/paySetting/publicAccountIndex"
+    },
+    {
+      "path": "pages/my/paySetting/addPublicAccountIndex"
+    },
+    {
+      "path": "pages/my/paySetting/payPasswordIndex"
+    },
+    {
+      "path": "pages/my/paySetting/paySortIndex"
+    },
+    {
+      "path": "pages/my/paySetting/passwordSettingIndex"
+    },
+    {
+      "path": "pages/my/paySetting/retrievePasswordIndex"
+    },
+    {
+      "path": "pages/my/paySetting/changePasswordIndex"
+    },
+    {
+      "path": "pages/my/paySetting/addAccount"
+    },
+    //    系统设置
+    {
+      "path": "pages/my/systemSettings/systemSettingsIndex"
+    },
+    {
+      "path": "pages/my/systemSettings/messageSettingsIndex"
+    },
+    {
+      "path": "pages/my/systemSettings/systemPowerIndex"
+    },
+    {
+      "path": "pages/my/systemSettings/versionInfoIndex"
+    },
+    {
+      "path": "pages/my/systemSettings/myCoupon"
+    },
+    //    关于好酒选
+    {
+      "path": "pages/my/about/aboutIndex"
+    },
+    {
+      "path": "pages/my/about/policyIndex"
+    },
+    //    建议与意见
+    {
+      "path": "pages/my/proposalIndex"
+    },
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    //申请样品页面
+    {
+      "path": "pages/index/applicationSample/sampleOrder"
+    },
+    {
+      "path": "pages/index/applicationSample/addressIndex"
+    },
+    {
+      "path": "pages/index/applicationSample/addAddressIndex"
+    },
+    {
+      "path": "pages/index/applicationSample/payOrderIndex"
+    },
+    {
+      "path": "pages/index/applicationSample/orderDetailsIndex"
+    },
+    {
+      "path": "pages/index/applicationSample/expressDetailsIndex"
+    },
+    {
+      "path": "pages/index/applicationSample/billDetailsIndex"
+    },
+    {
+      "path": "pages/index/applicationSample/payment"
+    },
+    //    企业人证认证&&城市选择页面&&搜索页面
+    {
+      "path": "pages/appCenter/attestation/basicInfo"
+    },
+    {
+      "path": "pages/appCenter/attestation/licenseInfo"
+    },
+    {
+      "path": "pages/appCenter/attestation/identityInfo"
+    },
+    {
+      "path": "pages/appCenter/attestation/faceinfo"
+    },
+    {
+      "path": "pages/appCenter/selectCity/selectCity"
+    },
+    {
+      "path": "pages/brandZone/brandZone"
+    },
+    {
+      "path": "pages/brandZone/brandDetails"
+    },
+    {
+      "path": "pages/appCenter/selectCity/selectArea"
+    },
+    {
+      "path": "pages/inventory/inventory"
+    },
+    {
+      "path": "pages/searchPage/searchPage"
+    },
+    {
+      "path": "pages/inventory/inventory"
+    },
+
+    // edwin:消息中心
+    {
+      "path": "pages/messageCenter/messageIndex"
+    },
+    {
+      "path": "pages/messageCenter/discussionGroup"
+    },
+    {
+      "path": "pages/messageCenter/customerServiceList"
+    },
+    {
+      "path": "pages/messageCenter/invoiceMsgList"
+    },
+    {
+      "path": "pages/messageCenter/stockWarningList"
+    },
+    {
+      "path": "pages/messageCenter/contractMsgList"
+    },
+    {
+      "path": "pages/messageCenter/refundMsgList"
+    },
+    {
+      "path": "pages/messageCenter/logisticsMsgList"
+    },
+    {
+      "path": "pages/messageCenter/allocationMsgList"
+    },
+    {
+      "path": "pages/messageCenter/systemMsgList"
+    },
+
+    // edwin:摄像头
+    {
+      "path": "pages/camera/idcard"
+    },
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // 探索页
+    {
+      "path": "pages/explore/exploreIndexH5"
+    },
+    {
+      "path": "pages/explore/editorIndex"
+    },
+    {
+      "path": "pages/explore/friendsCircle"
+    },
+    {
+      "path": "pages/explore/business"
+    },
+    {
+      "path": "pages/explore/productDetail"
+    },
+    {
+      "path": "pages/explore/exploreIndexAppCity",
+      "style": {
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
+      "path": "pages/explore/exploreIndexAppRecommend",
+      "style": {
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
+      "path": "pages/explore/take"
+    },
+    {
+      "path": "pages/explore/takeEdit"
+    },
+    {
+      "path": "pages/explore/searchIndex"
+    },
+    // profileIndex，探索个人页面
+    {
+      "path": "pages/explore/profileIndex"
+    },
+    {
+      "path": "pages/explore/editorName"
+    },
+    {
+      "path": "pages/explore/previewVideo"
+    },
+    {
+      "path": "pages/explore/previewVideoH5"
+    },
+    {
+      "path": "pages/explore/infoVideo/infoVideo"
+    },
+    {
+      "path": "pages/explore/infoVideo/infoVideoH5"
+    },
+
+
+
+
+//    商品视频页面
+
+    {
+      "path": "pages/index/videoPages/goodsVideo",
+      "style": {
+        "navigationBarTextStyle": "white",
+        "navigationBarBackgroundColor": "#ffffff",
+        "backgroundColorTop": "#FFFFFF"
+      }
+
+    },
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    {
+      "path": "uni_modules/uni-upgrade-center-app/pages/upgrade-popup",
+      "style": {
+        "disableScroll": true,
+        "app-plus": {
+          "backgroundColorTop": "transparent",
+          "background": "transparent",
+          "titleNView": false,
+          "scrollIndicator": false,
+          "popGesture": "none",
+          "animationType": "fade-in",
+          "animationDuration": 200
+        }
+      }
+    }
+  ]
+}

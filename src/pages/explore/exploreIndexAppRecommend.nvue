@@ -1,0 +1,1244 @@
+<template>
+    <view class="container">
+        <!-- 视频列表开始 -->
+        <!-- 点击视频爱心开始 -->
+        <image
+            v-if="isShowAixin"
+            :style="
+				'position: fixed; margin-left: ' +
+					aixinLeft +
+					'px; margin-top: ' +
+					aixinTop +
+					'px; width: 70px; height: 65px; transform: rotate(' +
+					Rotate +
+					'deg);'
+			"
+            src="@/static/img/index/aixining.png"
+        >
+        </image>
+        <!-- 点击视频爱心结束 -->
+        <view :style="'width: ' + windowWidth + 'px; height: ' + boxStyle.height + 'px;'" @touchend="viewTouchEnd"
+              @touchstart="viewTouchStart">
+            <!--
+             1.这里的 swiper 不是用来控制视频滑动的，而是用来控制左右滑动的，如果不需要的可以改成 view
+
+             2.为了 视频无限加载，已经把 21 行的 appear 去掉了，加上了 loadmore 方法（第10行）
+
+             3.由于方法比较多，可以采取下面的方式查看代码：
+             （1）Mac：按住 option 键，然后点击方法名，即可跳转到方法
+             （2）windows：按住 Alt 键，然后鼠标左击，即可跳转到方法
+             -->
+            <!-- list  app端nvue专用组件。 -->
+            <list
+                ref="listBox"
+                :loadmoreoffset="wHeight * 1"
+                :pagingEnabled="true"
+                :scrollable="true"
+                :show-scrollbar="false"
+                @loadmore="getData"
+                @scroll="scrolls"
+            >
+                <!-- 刷新模块 -->
+                <!-- <refresh> 为容器提供下拉刷新功能。在nvue上，可通过此组件实现灵活的、自定义的、高性能的下拉刷新。 -->
+                <!-- <refresh> 是 <scroll-view>、<list>、<waterfall> 的子组件，只能在被它们包含时才能被正确渲染。 -->
+                <refresh :display="refreshing ? 'show' : 'hide'" class="refresh" @pullingdown="onpullingdown"
+                         @refresh="onrefresh">
+                    <!-- 加载组件 -->
+                    <loading style="background-color: #FFFFFF;">
+                        <image
+                            :style="
+								'width: 80rpx; height: 40rpx; margin-top: 80rpx; margin-bottom: 30rpx; margin-left: ' +
+									(windowWidth - 200) +
+									'px;'
+							"
+                            src="@/static/img/index/logins.gif"
+                        >
+                        </image>
+                    </loading>
+                </refresh>
+
+                <!-- 循环数据 -->
+                <cell v-for="(item, i) in dataList" :key="i">
+                    <!-- 用div把视频模组套起来 -->
+                    <div :style="'width: ' + windowWidth + 'px; height: ' + boxStyle.height + 'px;'"
+                         @disappear="stop()">
+                        <view v-if="Math.abs(k - i) <= 1">
+                            <view class="root">
+                                <!--
+                                具体视频参数可以参考官方文档
+                                说明：
+                                1.v-if很关键，这里主要是为了减少 dom 元素【这样才不会加载视频多了闪退】，
+                                    这里 Math.abs(k-i)<=5 也就是往上预加载 5 个视频，往下预加载 5
+                                    个视频这样做的目的是为了让视频能够提前加载但是不播放，在真正滑到位
+                                    置的时候播放视频。
+                                    【2.0.1就是  1  Math.abs(k-i)<=1：请勿修改，记住，要不然会提前播放很多视频】
+
+                                2.要注意 @play="playIngs" 里面的 playIngs 方法，这个方法只是在视频播放的时候
+                                    起效果，我们控制视频播放不是用这个的。这个的主要作用是给视频封面的。我们先用
+                                    下面的视频封面盖住视频，等到视频播放的时候，我们不要急着直接播放，而是延迟一下下，
+                                    300-600ms左右。因为视频播放需要一点点时间，这点时间里会黑屏，这个时候我们就用
+                                    下面的封面盖住，这样用户就不会有从黑屏到有画面的感觉了，但是如果遇到视频太大，缓冲
+                                    时间太长，还是会出现短暂的黑屏，大部分是不会有黑屏的（这样盖住的话）。
+
+                                    【更新记录：2.0版】已经解决了视频黑屏问题，和加载速度慢的情况，如果还是出现了黑屏，
+                                    意味着此时手滑动的速度，已经超过了视频加载的速度，对于这个问题，建议修改 preloadNumber
+                                    变量，当它的值大一点的时候就会提前加载视频，这样用户在滑到视频的时候就不会有停顿感了
+                                    【注意】：老用户在 video 中增加和修改
+                                    （1）:muted="!item.playIng"，
+                                    （2）@timeupdate="timeupdate($event,i)"
+                                    （3）把 199 行注释了，
+                                    （4）:id="item._id"，
+                                    （5）修改：uni.createVideoContext(this.dataList[this.k]._id + '' + this.k,this) 为
+                                        uni.createVideoContext(this.dataList[this.k]._id,this)
+                                    （6）在 timeupdate 方法里加入，if(index == this.k){把里面的加一个总的判断}
+                                3.其他的下面有详解
+                                 -->
+                                <video
+                                    :id="item._id"
+                                    :ref="'item' + i"
+                                    :controls="false"
+                                    :enable-progress-gesture="false"
+                                    :http-cache="true"
+                                    :loop="true"
+                                    :muted="item.isplay"
+                                    :object-fit="object_fit"
+                                    :page-gesture="false"
+                                    :show-center-play-btn="false"
+                                    :show-fullscreen-btn="false"
+                                    :show-loading="false"
+                                    :src="item.src"
+                                    :style="boxStyle"
+                                    @play="playIngs(i)"
+                                    @timeupdate="timeupdate($event, i)"
+                                ></video>
+                                <!-- 这里是封面 -->
+                                <image
+                                    v-if="!item.playIng"
+                                    :mode="mode"
+                                    :src="item.src + '?x-oss-process=video/snapshot,t_100,f_jpg'"
+                                    :style="'width: ' + windowWidth + 'px; height: ' + (wHeight - deleteHeight) + 'px; position: absolute;'"
+                                >
+                                </image>
+                                <!--
+                                mode: 图片裁剪、缩放的模式
+                                mode 有 14 种模式，其中 5 种是缩放模式，9 种是裁剪模式。
+                                https://uniapp.dcloud.io/component/image
+                                 -->
+                            </view>
+                            <!-- 直接用 view 就行了，一样是可以覆盖原生组件的 -->
+                            <!-- 这个是暂停时出现的图标 -->
+                            <view
+                                :style="boxStyle"
+                                class="videoHover"
+                                @click="tapVideoHover(item.state, $event)"
+                                @touchstart="touchstartHover"
+                            >
+                                <image v-if="item.state == 'pause'" class="playState"
+                                       src="@/static/img/index/play.png"></image>
+                            </view>
+                            <view class="userInfo">
+
+                                <!-- 1.头像 -->
+                                <image
+                                    v-if="item.isShowProgressBarTime == false"
+                                    :src="item.href"
+                                    class="userAvatar"
+                                    mode="aspectFill"
+                                    @click="tozuozhe"
+                                ></image>
+                                <!-- 联系他 -->
+                                <view v-if="item.isShowProgressBarTime == false" style="opacity: 0.9; margin-top: 17px;"
+                                      @click="call">
+                                    <image
+                                        :src="phone"
+                                        style="width: 40px; height: 40px; position: absolute; right: 5px;"
+                                    ></image>
+                                    <text
+                                        style="color: #FFFFFF; margin-top: 5px; font-size: 10px; text-align: center; font-weight: bold; margin-top: 40px;opacity: 0.8"
+                                    >
+                                        联系他
+                                    </text>
+                                </view>
+                                <!-- 2.点赞 -->
+                                <view
+                                    v-if="item.isShowProgressBarTime == false"
+                                    style="opacity: 0.9; margin-top: 17px;"
+                                    @click="cLike(item.like)"
+                                >
+                                    <image
+                                        v-if="item.like"
+                                        src="@/static/img/index/xin.png"
+                                        style="width: 40px; height: 40px; position: absolute; right: 6px;"
+                                    ></image>
+                                    <image
+                                        v-if="!item.like"
+                                        :src="xin"
+                                        style="width: 40px; height: 40px; position: absolute; right: 6px;"
+                                    ></image>
+                                    <text
+                                        :style="item.like?'color: red;':'color: white;'"
+                                        style="margin-top: 5px; font-size: 14px; text-align: center; margin-top: 40px; font-weight: bold;"
+                                    >{{ item.like_n }}
+                                    </text>
+                                </view>
+                                <!-- 3.评论 -->
+                                <!--                                <view-->
+                                <!--                                    v-if="item.isShowProgressBarTime == false"-->
+                                <!--                                    class="comment"-->
+                                <!--                                    style="opacity: 0.9; margin-top: 17px;"-->
+                                <!--                                    @click="toComment(i)"-->
+                                <!--                                >-->
+                                <!--                                    <image-->
+                                <!--                                        src="@/static/img/index/liaotian-2.png"-->
+                                <!--                                        style="width: 35px; height: 35px; position: absolute; right: 7px;"-->
+                                <!--                                    ></image>-->
+                                <!--                                    <text-->
+                                <!--                                        style="color: #FFFFFF; margin-top: 5px; font-size: 14px; font-weight: bold; text-align: center; margin-top: 40px;"-->
+                                <!--                                    >-->
+                                <!--                                        {{ item.sms_n }}-->
+                                <!--                                    </text>-->
+                                <!--                                </view>-->
+                                <!-- 4.分享 -->
+                                <view v-if="item.isShowProgressBarTime == false" style="opacity: 0.9; margin-top: 17px;"
+                                      @click="share">
+                                    <image
+                                        :src="share"
+                                        style="width: 40px; height: 40px; position: absolute; right: 5px;"
+                                    ></image>
+                                    <text
+                                        style="color: #FFFFFF; margin-top: 5px; font-size: 14px; text-align: center; font-weight: bold; margin-top: 40px;"
+                                    >
+                                        0
+                                    </text>
+                                </view>
+                            </view>
+                            <!-- 最底下的文字部分 -->
+                            <view v-if="dataList.length !== 0 && dataList[k].isShowProgressBarTime == false"
+                                  class="content">
+                                <view class="goodsFlex" style="color: white">
+                                    <image :src="address2" mode="widthFix" style="width: 36rpx;"></image>
+                                    <text class="" style="color: #FFFFFF;font-size: 12px;"> 贵阳观山湖区|2.1km</text>
+                                </view>
+                                <view class="goodsFlex" @click="pageTo('pages/hotActivity/activityDetails')">
+                                    <image :src="goods1" mode="widthFix" style="width: 36rpx;padding: 5rpx;"></image>
+                                    <text style="color: #FFFFFF;font-size: 12px">商品|茅台1937瓶装酱香酒...</text>
+                                </view>
+
+                                <text :style="'width: ' + (windowWidth - 90) + 'px;'" class="userName">@{{ item.title }}
+                                </text
+                                ><!-- i={{i}} -->
+                                <text :style="'width: ' + (windowWidth - 90) + 'px;'" class="words"> {{ item.msg
+                                    }}-{{ k + 1 }}
+                                </text
+                                ><!-- k={{k}} -->
+                            </view>
+                            <!-- 1.视频预览时的图片，currenttimes：就是获取当前滑块的时间点，如果不需要，可以注释掉 -->
+                            <!-- 2.如果使用下面的视频预览的话要注意的是视频链接最好是阿里云上的，因为
+                                    https://xxxxxxxxx.mp4?x-oss-process=video/snapshot,t_1000,f_jpg
+                                    这个是阿里云的东西，至于其他的视频截帧我还没有试过。
+                                    -->
+                            <!-- 3.阿里云视频截帧地址：https://help.aliyun.com/document_detail/64555.html -->
+                            <image
+                                v-if="item.isShowimage == true"
+                                :src="item.src + '?x-oss-process=video/snapshot,t_' + currenttimes + '000,f_jpg'"
+                                :style="
+									'width: 120rpx; height: 160rpx; border-radius: 10rpx; position: absolute; bottom: ' +
+										(ProgressBarBottom + 160) +
+										'rpx; left: ' +
+										(currentPositions - 15) +
+										'px;'
+								"
+                                mode="aspectFill"
+                            >
+                            </image>
+                        </view>
+                    </div>
+                </cell>
+            </list>
+            <!-- 1.注意：进度条这类拖拽的东西不能放进block\cell这些循环体中的，要不然touchmove方法会捕捉有误 -->
+            <view
+                v-if="dataList.length !== 0 && dataList[k].isShowProgressBarTime == true"
+                :style="
+					'position: absolute; bottom: ' +
+						(ProgressBarBottom + this.windowWidth * 0.2) / 2 +
+						'px; left: ' +
+						(windowWidth * 2 - this.windowWidth * 1.35) / 2 +
+						'px;'
+				"
+            >
+                <text style="font-size: 22px; font-weight: bold; color: #F1F1F1;">{{ changeTime }} / {{ videoTimes }}
+                </text>
+            </view>
+            <!-- 这里就是进度条了：纯手工进度条，调整位置的话就把他们的 bottom 改成一下就行了 -->
+            <view
+                v-if="isDragging == false"
+                style="position: absolute; bottom: 0; left: 0;"
+                @touchend="touchend"
+                @touchmove="touchmove"
+                @touchstart="touchstart"
+            >
+                <!-- 1.这一步必须加，为了适配低端机型 -->
+                <text :style="'width: ' + windowWidth + 'px; opacity: 0;'">.</text>
+                <!-- 2.这是未加载的时的右边的灰色部分 -->
+                <view
+                    :style="
+						'width: ' +
+							windowWidth +
+							'px; height: 4rpx; background-color: #C8C7CC; position: absolute; bottom: ' +
+							ProgressBarBottom +
+							'rpx; opacity: ' +
+							ProgressBarOpacity +
+							';'
+					"
+                >
+                </view>
+                <!-- 3.这里我采用的分离式办法：就是让滑动样式和不滑动的样式分开，这样相互不干扰，可以避免进度条闪动的问题 -->
+                <!-- 4.注意：isShowProgressBarTime 加入了返回数据中 -->
+                <view
+                    v-if="dataList.length !== 0 && dataList[k].isShowProgressBarTime == false"
+                    :style="
+						'width: ' +
+							currentPosition +
+							'px; height: 4rpx; background-color: #FFFFFF; position: absolute; bottom: ' +
+							ProgressBarBottom +
+							'rpx; left: 0; opacity: ' +
+							(ProgressBarOpacity - 0.1) +
+							';'
+					"
+                >
+                </view>
+                <view
+                    v-if="dataList.length !== 0 && dataList[k].isShowProgressBarTime == true"
+                    :style="
+						'width: ' +
+							currentPositions +
+							'px; height: 8rpx; background-color: #FFFFFF; position: absolute; bottom: ' +
+							ProgressBarBottom +
+							'rpx; left: 0; opacity: ' +
+							(ProgressBarOpacity + 0.05) +
+							';'
+					"
+                >
+                </view>
+                <view
+                    v-if="dataList.length !== 0 && dataList[k].isShowProgressBarTime == false"
+                    :style="
+						'width: 4px; height: 4px; background-color: #FFFFFF; border-radius: 10px; position: absolute; bottom: ' +
+							(ProgressBarBottom - 2) +
+							'rpx; left: ' +
+							currentPosition +
+							'px; opacity: ' +
+							ProgressBarOpacity +
+							';'
+					"
+                >
+                </view>
+                <view
+                    v-if="dataList.length !== 0 && dataList[k].isShowProgressBarTime == true"
+                    :style="
+						'width: ' +
+							dotWidth +
+							'px; height: ' +
+							dotWidth +
+							'px; background-color: #FFFFFF; border-radius: 10px; position: absolute; bottom: ' +
+							(ProgressBarBottom - 5) +
+							'rpx; left: ' +
+							(currentPositions - 5) +
+							'px; opacity: ' +
+							ProgressBarOpacity +
+							';'
+					"
+                >
+                </view>
+            </view>
+        </view>
+        <!-- 视频列表结束 -->
+        <!--
+
+        请前往 douyin-scrollview.nvue 文件查看
+
+        已经全部注释
+
+         这里就是引入评论插件
+
+         -->
+        <uni-popup ref="pinglun" type="bottom" @touchmove.stop.prevent="moveHandle">
+            <view
+                :style="
+					'width: ' +
+						windowWidth +
+						'px; height: ' +
+						boxStyle.height / heightNum +
+						'px; background-color: #242424; border-top-left-radius: 10px; border-top-right-radius: 10px;'
+				"
+            >
+                <!--
+                 注意：
+                 deleteIOSHeight
+                 deleteAndroidHeight
+                 这两个参数用于控制评论等的高度
+                 -->
+                <douyin-scrollview
+                    :Height="boxStyle.height / 1.33"
+                    :Width="windowWidth"
+                    :deleteAndroidHeight="15"
+                    :deleteIOSHeight="36"
+                    @closeScrollview="closeScrollview"
+                ></douyin-scrollview>
+            </view>
+        </uni-popup>
+        <win-tab-bar></win-tab-bar>
+        <exploreTopNav></exploreTopNav>
+    </view>
+</template>
+<script>
+// import userList from './data.js'//这个是假数据
+/* 引入评论组件 */
+import douyinScrollview from "/src/components/douyin-scrollview/douyin-scrollview.nvue";
+import config from "/src/config/index";
+import exploreTopNav from "./components/exploreTopNav.vue";
+import winTabBar from "/src/components/win/win-tab-bar";
+import localVideoList from "./videoList";
+import fxbImage from "/src/components/fxb/fxb-image";
+import { mapMutations, mapState } from "vuex";
+
+export default {
+    data() {
+        return {
+            fxbImage,
+            // edwin:视频假数据
+            videoList: localVideoList,
+            // 搜索
+            startX: 0,
+            startY: 0,
+            searchSatus: false,
+            statusBarHeight: 28,
+            searchWord: "",
+
+            //图标
+            back1: config.IMG_SERVER + "/img/explore/icon003.png",
+            back2: config.IMG_SERVER + "/img/explore/icon004.png",
+            add1: config.IMG_SERVER + "/img/explore/icon001.png",
+            add2: config.IMG_SERVER + "/img/explore/icon002.png",
+            search1: config.IMG_SERVER + "/img/explore/icon006.png",
+            search2: config.IMG_SERVER + "/img/explore/icon005.png",
+            user1: config.IMG_SERVER + "/img/explore/icon008.png",
+            user2: config.IMG_SERVER + "/img/explore/icon007.png",
+            share: config.IMG_SERVER + "/img/explore/newIcon.png",
+            xin: config.IMG_SERVER + "/img/explore/newIcon2.png",
+            phone: config.IMG_SERVER + "/img/explore/newIcon3.png",
+            goods1: config.IMG_SERVER + "/img/explore/newIcon7.png",
+            address1: config.IMG_SERVER + "/img/explore/icon010.png",
+            address2: config.IMG_SERVER + "/img/explore/newIcon6.png",
+            //
+            showSearch: false,
+            bgcolor: "linear-gradient(red 30%,lime 50%,blue 70%)",
+            showType: "tuijian",
+
+            //下面打🌟号的是必须要的基础字段
+            //下面打💗号的是拥有滑动条的必须字段
+            dataList: [], //用于数据循环的列表🌟💗
+            wHeight: 0, //获取的屏幕高度🌟💗
+            boxStyle: {
+                //视频，图片封面样式🌟💗
+                height: 0,
+                width: 0
+            },
+            k: 0, //默认为0🌟💗
+            playIngIds: [], //正在播放的视频id列队，列队用于处理滑动过快导致的跳频问题🌟💗
+            ready: false, //可忽略
+            isDragging: false, //false代表停止滑动🌟💗
+            refreshing: true, //用于下拉刷新🌟💗
+            windowWidth: 0, //获取屏幕宽度🌟💗
+            windowHeight: 0,
+            dex: [0, 0], //用于判断是上滑还是下滑，第一个存旧值，第二个存新值【目前在1.0.7已经废弃】
+            currents: 0, //用于左右滑动，0代表视频界面，1代表右滑界面🌟💗
+            platform: "", //用于获取操作系统：ios、android🌟💗
+            playIng: false, //用于视频初始化时是否播放，默认不播放🌟💗
+            videoTime: "", //视频总时长，这个主要用来截取时间数值💗
+            videoTimes: "", //视频时长，用这个来获取时间值，例如：00:30这个时间值💗
+            changeTime: "", //显示滑动进度条时变化的时间💗
+            isShowimage: false, //是否显示封面【1.0.4已废弃，但是意思需要记住】
+            currenttimes: 0, //当前时间💗
+            isShowProgressBarTime: false, //是否拖动进度条，如果拖动（true）则显示进度条时间，否则不显示（false）【1.0.4已废弃，但是意思需要记住】
+            ProgressBarOpacity: 0.7, //进度条不拖动时的默认值，就是透明的💗
+            dotWidth: 0, //播放的小圆点，默认没有💗
+            deleteHeight: 0, //测试高度🌟💗
+            percent: 0, //百分小数💗
+            currentPosition: 0, //滑块当前位置💗//2.0已弃用，现已用于后端参数
+            currentPositions: 0, //滑块当前位置的副本💗//2.0已弃用，现已用于后端参数
+            newTime: 0, //跟手滑动后的最新时间💗
+            timeNumber: 0, //🌟💗
+            ProgressBarBottom: 20, //进度条离底部的距离💗
+            object_fit: "contain", //视频样式默认包含🌟💗
+            mode: "aspectFit", //图片封面样式🌟💗
+            timeout: "", //🌟用来阻止 setTimeout()方法
+            voice: "", //🌟用来阻止 setTimeout()方法
+            oldVideo: "",
+
+            isAutoplay: false, //是否开启自动播放(默认不开启)
+            autoplayText: "开启自动播放",
+            timers: "",
+
+            // 引入评论 - 参数
+            heightNum: 1.18,
+
+            // 双击点赞参数
+            touchNum: 0,
+            aixinLeft: 0,
+            aixinTop: 0,
+            isShowAixin: false,
+            Rotate: 0
+        };
+    },
+    components: {
+        winTabBar,
+        douyinScrollview,
+        exploreTopNav
+    },
+    watch: {
+        async k(k, old_k) {
+            //监听 k 值的变化，可以控制视频的播放与暂停
+            console.log(k);
+            this.dataList[old_k].state = "stop"; //如果是被滑走的视频，就停止播放
+            this.dataList[old_k].playIng = false; //如果视频暂停，就加载封面
+            this.dataList[old_k].isplay = true;
+            uni.createVideoContext(this.dataList[old_k]._id, this).play();
+            clearTimeout(this.oldVideo);
+            this.oldVideo = await setTimeout(() => {
+                uni.createVideoContext(this.dataList[old_k]._id, this).seek(0);
+                uni.createVideoContext(this.dataList[old_k]._id, this).pause();
+                console.log("预留第" + (old_k + 1) + "个视频：" + this.dataList[old_k]._id);
+            }, 500);
+            // 2.0版本已经去掉了下面这一句，视频不用暂停，只需要把声音禁止就行
+            // uni.createVideoContext(this.dataList[old_k]._id + '' + old_k,this).stop()//如果视频暂停，那么旧视频停止，这里的this.dataList[old_k]._id + '' + old_k，后面加 old_k 是为了每一个视频的 id 值不同，这样就可以大程度的避免串音问题
+            uni.createVideoContext(this.dataList[k]._id, this).play();
+            console.log("已经暂停 --> 第" + (old_k + 1) + "个视频～"); //提示
+            clearTimeout(this.voice);
+            this.voice = await setTimeout(() => {
+                this.dataList[k].isplay = false;
+            }, 300);
+            await setTimeout(() => {
+                this.dataList[k].playIng = true;
+            }, 850);
+            //【2.0版本更新内容】- start
+            var p = k;
+            ++p;
+            await setTimeout(async () => {
+                uni.createVideoContext(this.dataList[p]._id, this).play();
+                clearTimeout(this.timeout);
+                this.timeout = await setTimeout(() => {
+                    uni.createVideoContext(this.dataList[p]._id, this).seek(0);
+                    uni.createVideoContext(this.dataList[p]._id, this).pause();
+                    console.log("预加载第" + (p + 1) + "个视频：" + this.dataList[p]._id);
+                }, 1500);
+            }, 20);
+            //【2.0版本更新内容】- end
+            //【此处处理进度条卡住的问题】
+            if (uni.getSystemInfoSync().platform !== "ios") {
+                await setTimeout(() => {
+                    uni.createVideoContext(this.dataList[k]._id, this).pause();
+                    uni.createVideoContext(this.dataList[k]._id, this).play();
+                }, 100);
+            }
+        }
+    },
+    onShow(e) {
+        this.setBottomBarIndex(3);
+        this.changeSelectType(0);
+        console.log("回到前台");
+        // if (this.dataList.length !== 0) {
+        //     this.dataList[this.k].state = "play";
+        //     uni.createVideoContext(this.dataList[this.k]._id, this).play();
+        // }
+    },
+    onHide() {
+        this.dataList[this.k].state = "pause"; //界面隐藏也要停止播放视频
+        uni.createVideoContext(this.dataList[this.k]._id, this).pause(); //暂停以后继续播放
+        console.log("到后台");
+    },
+    onLoad() {
+        this.platform = uni.getSystemInfoSync().platform;
+        var model = uni.getSystemInfoSync().model;
+        if (this.platform == "ios" && (model !== "iPhone6" || model !== "iPhone6s" || model !== "iPhone7" || model !== "iPhone8")) {
+            this.deleteHeight = 60; //有 tabbar的 修改这里可以改变视频高度
+            /*
+                引入评论参数
+                */
+            this.heightNum = 1.27;
+        } else {
+            this.deleteHeight = 50;
+            /*
+                引入评论参数
+                */
+            this.heightNum = 1.18;
+        }
+        this.statusBarHeight = uni.getSystemInfoSync().statusBarHeight;
+        this.windowWidth = uni.getSystemInfoSync().screenWidth; //获取屏幕宽度
+        this.boxStyle.width = this.windowWidth + "px"; //给宽度加px
+        this.wHeight = uni.getSystemInfoSync().screenHeight; //获取屏幕高度
+        this.boxStyle.height = this.wHeight - this.deleteHeight; //改变视频高度
+        this.get(); //这一步，加载视频数据
+    },
+    onReady() {
+    },
+    computed: {
+        ...mapState("explore", ["selectType"])
+    },
+    methods: {
+        ...mapMutations("explore", ["changeSelectType"]),
+        ...mapMutations("index", ["setBottomBarIndex"]),
+        //屏幕左右滑动
+        /**
+         * 触摸开始
+         * @param {Object} e
+         */
+        viewTouchStart: function(e) {
+            if (e.touches.length == 1) {
+                //设置触摸起始点水平方向位置
+                this.startX = e.changedTouches[0].pageX;
+                this.startY = e.changedTouches[0].pageY;
+            }
+        },
+        /**
+         * 触摸结束
+         * @param {Object} e
+         */
+        viewTouchEnd: function(e) {
+            if (this.startX>(e.changedTouches[0].pageX+70)){
+                if (this.startY>e.changedTouches[0].pageY&&this.startY-e.changedTouches[0].pageY<50){
+                    this.changeSelectType({val:'1',jump:true});
+                }
+                if (this.startY<e.changedTouches[0].pageY&&e.changedTouches[0].pageY-this.startY<50){
+                    this.changeSelectType({val:'1',jump:true});
+                }
+                return
+            }
+            if (this.startX<(e.changedTouches[0].pageX-70)){
+                if (this.startY>e.changedTouches[0].pageY&&this.startY-e.changedTouches[0].pageY<50){
+                    this.changeSelectType({val:'2',jump:true});
+                }
+                if (this.startY<e.changedTouches[0].pageY&&e.changedTouches[0].pageY-this.startY<50){
+                    this.changeSelectType({val:'2',jump:true});
+                }
+                return
+            }
+        },
+        search() {
+            this.searchSatus = true;
+        },
+        hiddenSearch() {
+            this.showSearch = false;
+        },
+        back() {
+            uni.navigateTo({
+                url: "pages/index/index"
+            });
+        },
+        showSearchFun() {
+            this.showSearch = true;
+            this.dataList[this.k].state = "pause";
+        },
+        pageTo(url) {
+            uni.navigateTo({
+                url
+            });
+        },
+        changeType(val) {
+            if (val == "quanzi") {
+                this.bgcolor = "white";
+            } else {
+                this.bgcolor = "linear-gradient(red 30%,lime 50%,blue 70%)";
+            }
+            this.showType = val;
+        },
+
+        autoPlay() {
+            this.isAutoplay = !this.isAutoplay;
+            if (!this.isAutoplay) {
+                this.autoplayText = "开启自动播放";
+                uni.showToast({
+                    title: "关闭自动播放",
+                    icon: "none",
+                    duration: 3000
+                });
+            } else {
+                this.autoplayText = "关闭自动播放";
+                uni.showToast({
+                    title: "开启自动播放",
+                    icon: "none",
+                    duration: 3000
+                });
+            }
+        },
+        getData() {
+            // 这里就是数据加载完以后再向后端发送数据的地方
+            // uni.request({
+            //     url: "https://bdb24c6d-8c19-4f80-8e7e-c9c9f037f131.bspapp.com/video",
+            //     method: "POST",
+            //     data: {
+            //         info: "get_video"
+            //     },
+            //     success: res => {
+            //         var msg = res.data.data;
+            //         for (let i = 0; i < msg.length; i++) {
+            //             this.dataList.push(msg[i]);
+            //         }
+            //     }
+            // });
+        },
+        touchstart(event) {
+            this.dataList[this.k].isShowimage = true; //刚触摸的时候就要显示预览视频图片了
+            this.dataList[this.k].isShowProgressBarTime = true; //显示时间线
+            this.ProgressBarOpacity = 1; //让滑块显示起来更明显一点
+            this.dotWidth = 10; //让点显示起来更明显一点
+        },
+        touchend() {
+            //当手松开后，跳到最新时间
+            uni.createVideoContext(this.dataList[this.k]._id, this).seek(this.newTime);
+            if (this.dataList[this.k].state == "pause") {
+                this.dataList[this.k].state = "play";
+                uni.createVideoContext(this.dataList[this.k]._id, this).play();
+            }
+            this.dataList[this.k].isShowProgressBarTime = false; //触摸结束后，隐藏时间线
+            this.dataList[this.k].isShowimage = false; //触摸结束后，隐藏时间预览
+            this.ProgressBarOpacity = 0.5; //隐藏起来进度条，不那么明显了
+            this.dotWidth = 0; //隐藏起来进度条，不那么明显了
+        },
+        touchmove(event) {
+            //当手移动滑块时，计算位置、百分小数、新的时间
+            var msg = [];
+            if (this.videoTime !== "") {
+                msg = this.videoTime.split(":");
+            }
+            var timeNumber = Number(msg[0]) * 60 + Number(msg[1]);
+            this.currentPositions = event.changedTouches[0].screenX;
+            this.percent = this.currentPositions / this.windowWidth;
+            this.newTime = this.percent * timeNumber;
+            this.currenttimes = parseInt(this.newTime);
+            let theTime = this.newTime;
+            let middle = 0; // 分
+            if (theTime > 60) {
+                middle = parseInt(theTime / 60);
+                theTime = parseInt(theTime % 60);
+            }
+            this.changeTime = `${Math.round(middle) > 9 ? Math.round(middle) : "0" + Math.round(middle)}:${
+                Math.round(theTime) > 9 ? Math.round(theTime) : "0" + Math.round(theTime)
+            }`;
+        },
+        timeupdate(event, index) {
+            //计算滑块当前位置，计算当前百分小数
+            // console.log(index)
+            if (index == this.k) {
+                // console.log(event)
+                var currenttime = event.detail.currentTime;
+                this.timeNumber = Math.round(event.detail.duration);
+                this.getTime();
+                this.percent = currenttime / this.timeNumber;
+                this.currentPosition = this.windowWidth * this.percent;
+                let theTime = currenttime;
+                let middle = 0; // 分
+                if (theTime > 60) {
+                    middle = parseInt(theTime / 60);
+                    theTime = parseInt(theTime % 60);
+                }
+                this.changeTime = `${Math.round(middle) > 9 ? Math.round(middle) : "0" + Math.round(middle)}:${
+                    Math.round(theTime) > 9 ? Math.round(theTime) : "0" + Math.round(theTime)
+                }`;
+                //自动切换视频
+                if (this.isAutoplay) {
+                    //true,代表自动播放
+                    if (Math.round(currenttime) == this.timeNumber - 1) {
+                        const dom = uni.requireNativePlugin("dom");
+                        let doms = "item" + (this.k + 1);
+                        setTimeout(() => {
+                            let el = this.$refs[doms][0];
+                            dom.scrollToElement(el, {
+                                offset: 0,
+                                animated: true
+                            });
+                        }, 500);
+                    }
+                }
+            }
+        },
+        getTime() {
+            //得到时间函数
+            this.videoTime = this.formatSeconds(this.timeNumber);
+            // console.log(that.videoTime)
+            var msg = [];
+            if (this.videoTime !== "") {
+                msg = this.videoTime.split(":");
+            }
+            this.videoTimes = `${msg[0] > 9 ? msg[0] : "0" + msg[0]}:${msg[1] > 9 ? msg[1] : "0" + msg[1]}`;
+        },
+        formatSeconds(value) {
+            //获取时间函数
+            let theTime = parseInt(value); // 秒
+            let middle = 0; // 分
+            if (theTime > 60) {
+                middle = parseInt(theTime / 60);
+                theTime = parseInt(theTime % 60);
+            }
+            return `${middle > 9 ? middle : middle}:${theTime > 9 ? theTime : theTime}`;
+        },
+        playIngs(index) {
+            //
+        },
+        moreVideo(index) {
+        },
+        toVideo(index) {
+        },
+        erweima() {
+        },
+        tozuozhe() {
+            this.currents = 1; //点击头像以后就会切换
+            uni.navigateTo({
+                url: "pages/explore/profileIndex"
+            });
+        },
+        call() {
+            uni.makePhoneCall({
+                phoneNumber: "18464654968"
+            });
+        },
+        stop() {
+            // console.log('stop')
+        },
+        scrolls(event) {
+            this.isDragging = event.isDragging;
+            if (!event.isDragging) {
+                //isDragging：判断用户是不是在滑动，滑动：true，停止滑动：false。我们要用户停止滑动时才给 k 赋值，这样就可以避免很多麻烦
+                var i = Math.round(Math.abs(event.contentOffset.y) / (this.wHeight - this.deleteHeight + 1)); //先用绝对值取出滑动的距离，然后除以屏幕高度，取一个整，就知道你现在滑动到哪一个视频了
+                if (i !== this.k) {
+                    //这里加判断是因为这个方法会执行很多次，会造成重复请求，所以这里写一个限制
+                    if (uni.getSystemInfoSync().platform == "ios") {
+                        this.k = i; //判断了用户没有滑动，确认了用户的确是在看这个视频，然后就赋值啦
+                        this.dataList[this.k].state = "play";
+                        console.log("正在播放 --> 第" + (this.k + 1) + "个视频～");
+                    } else {
+                        clearTimeout(this.timers);
+                        this.timers = setTimeout(() => {
+                            this.k = i; //判断了用户没有滑动，确认了用户的确是在看这个视频，然后就赋值啦
+                            this.dataList[this.k].state = "play";
+                            console.log("正在播放 --> 第" + (this.k + 1) + "个视频～");
+                        }, 80);
+                    }
+                }
+            }
+        },
+        async get() {
+            // 这个方法主要就是用来第一次进入视频播放时用来处理的
+            // this.dataList = userList;//这个就是赋值加载视频啦
+            // 网络源切换成本地服务器源--开始
+            // uni.request({
+            //     url: "https://bdb24c6d-8c19-4f80-8e7e-c9c9f037f131.bspapp.com/video",
+            //     method: "POST",
+            //     data: {
+            //         info: "get_video"
+            //     },
+            //     success: async res => {
+            //         var msg = res.data.data;
+            //         console.log(msg)
+            //         this.dataList = msg;
+            //         this.dataList[0].state = "play";
+            //         await setTimeout(() => {
+            //             //这里的延迟是为了避免执行时间太快而直接跳过执行的 bug
+            //             uni.createVideoContext(this.dataList[0]._id, this).seek(0);
+            //             uni.createVideoContext(this.dataList[0]._id, this).play();
+            //         }, 200);
+            //         this.dataList[0].isplay = false;
+            //         await setTimeout(() => {
+            //             this.dataList[0].playIng = true;
+            //         }, 500);
+            //         var p = 0;
+            //         await setTimeout(async () => {
+            //             ++p;
+            //             uni.createVideoContext(this.dataList[p]._id, this).play();
+            //             await setTimeout(() => {
+            //                 uni.createVideoContext(this.dataList[p]._id, this).seek(0);
+            //                 uni.createVideoContext(this.dataList[p]._id, this).pause();
+            //                 console.log("预加载第" + (p + 1) + "个视频：" + this.dataList[p]._id);
+            //             }, 800);
+            //         }, 50);
+            //     }
+            // });
+            // -------------------------------------------
+            const msg = this.videoList;
+
+            // console.log(msg)
+            this.dataList = msg;
+            this.dataList[0].state = "play";
+            await setTimeout(() => {
+                //这里的延迟是为了避免执行时间太快而直接跳过执行的 bug
+                uni.createVideoContext(this.dataList[0]._id, this).seek(0);
+                uni.createVideoContext(this.dataList[0]._id, this).play();
+            }, 200);
+            this.dataList[0].isplay = false;
+            await setTimeout(() => {
+                this.dataList[0].playIng = true;
+            }, 500);
+            var p = 0;
+            await setTimeout(async () => {
+                ++p;
+                uni.createVideoContext(this.dataList[p]._id, this).play();
+                await setTimeout(() => {
+                    uni.createVideoContext(this.dataList[p]._id, this).seek(0);
+                    uni.createVideoContext(this.dataList[p]._id, this).pause();
+                    console.log("预加载第" + (p + 1) + "个视频：" + this.dataList[p]._id);
+                }, 800);
+            }, 50);
+            // ------------------网络源切换成本地服务器源--结束
+
+        },
+        onpullingdown() {
+            // console.log('正在下拉刷新，此时手还在触摸没有松开')
+            this.refreshing = true;
+        },
+        onrefresh() {
+            // console.log('下拉刷新完毕，此时手松开了')
+            setTimeout(() => {
+                this.refreshing = false;
+            }, 1000);
+        },
+        // 双击点赞效果
+        touchstartHover(event) {
+            if (this.touchNum >= 1) {
+                // console.log('双击 -- X坐标：'+ event.touches[0].screenX);
+                // console.log('双击 -- Y坐标：'+ event.touches[0].screenY);
+                this.aixinLeft = event.touches[0].screenX - 50;
+                this.aixinTop = event.touches[0].screenY - 50;
+                this.isShowAixin = true;
+                let max = 40;
+                let min = -40;
+                this.Rotate = Math.floor(Math.random() * (max - min + 1)) + min;
+                setTimeout(() => {
+                    this.isShowAixin = false;
+                }, 700);
+                this.onTabItemTaps();
+            }
+        },
+        //点击播放&&暂停
+        tapVideoHover(state, event) {
+            this.dataList[this.k].isShowimage = false;
+            this.dataList[this.k].isShowProgressBarTime = false;
+            this.ProgressBarOpacity = 0.5;
+            this.dotWidth = 0;
+            console.log("state--", state);
+            // 1.启用双击点赞 --- start
+            this.touchNum++;
+            setTimeout(() => {
+                if (this.touchNum == 1) {
+                    if (state == "play" || state == "continue") {
+                        this.dataList[this.k].state = "pause";
+                    } else {
+                        this.dataList[this.k].state = "continue";
+                    }
+                    if (this.dataList[this.k].state == "continue") {
+                        uni.createVideoContext(this.dataList[this.k]._id, this).play(); //暂停以后继续播放
+                    }
+                    if (this.dataList[this.k].state == "pause") {
+                        uni.createVideoContext(this.dataList[this.k]._id, this).pause(); //暂停以后继续播放
+                    }
+                }
+                if (this.touchNum >= 2) {
+                    this.doubleLike();
+                }
+                this.touchNum = 0;
+            }, 200);
+            // --------------- ending
+            // 2. 不启用双击点赞 start
+            // if(state=='play'||state=='continue'){
+            // 	this.dataList[this.k].state = 'pause';
+            // }else{
+            // 	this.dataList[this.k].state = 'continue';
+            // }
+            // if(this.dataList[this.k].state == 'continue'){
+            // 	uni.createVideoContext(this.dataList[this.k]._id,this).play();//暂停以后继续播放
+            // }
+            // if(this.dataList[this.k].state == 'pause'){
+            // 	uni.createVideoContext(this.dataList[this.k]._id,this).pause();//暂停以后继续播放
+            // }
+            // --------------- ending
+        },
+        doubleLike() {
+            if (this.dataList[this.k].like == false) {
+                this.dataList[this.k].like_n += 1;
+                this.dataList[this.k].like = true;
+            }
+            /*
+                点赞
+                */
+        },
+        toComment(index) {
+            // 注意点击评论之后会执行这里
+            /*
+                （1）先加载缓冲
+                （2）获取当前视频 ID 信息
+                （3）🌟🌟🌟🌟重要🌟🌟🌟🌟
+                    - 一定要记得看 index.vue 里面
+                     uni.setStorageSync("user",this.peopleList[i]);
+                     这个东西，用于存储当前用户信息。在 插件里面会使用到这个东西，
+                     记得写一下。
+
+                （4）打开评论
+                */
+            uni.showToast({
+                title: "加载中...",
+                icon: "none",
+                position: "bottom",
+                duration: 300
+            });
+            uni.setStorageSync("videoID", this.dataList[index]._id);
+            this.$refs.pinglun.open("bottom");
+        },
+        share() {
+            uni.showToast({
+                title: "分享",
+                icon: "none"
+            });
+        },
+
+        previewVideo() {
+            console.log(222);
+            uni.showToast({
+                title: "跳转预览",
+                icon: "none"
+            });
+            uni.navigateTo({
+                url: "pages/explore/previewVideo"
+            });
+        },
+
+        cLike(sss) {
+            this.dataList[this.k].like = !this.dataList[this.k].like;
+            const video = this.dataList[this.k];
+            sss ? (video.like_n -= 1) : (video.like_n += 1);
+            /*点赞*/
+        },
+        moveHandle() {
+        },
+        closeScrollview() {
+            // 点击评论里面的叉叉，就会关闭评论
+            this.$refs.pinglun.close();
+        },
+        onTabItemTaps() {
+            if (uni.getSystemInfoSync().platform == "ios") {
+                let UIImpactFeedbackGenerator = plus.ios.importClass("UIImpactFeedbackGenerator");
+                let impact = new UIImpactFeedbackGenerator();
+                impact.prepare();
+                impact.init(1);
+                impact.impactOccurred();
+            }
+            if (uni.getSystemInfoSync().platform == "android") {
+                uni.vibrateShort({
+                    success: () => {
+                        console.log("点击震动");
+                    }
+                });
+            }
+        }
+    }
+};
+</script>
+<style lang="scss" scoped>
+.text-white {
+    color: white !important;
+}
+
+.nineGridBox {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.flex-nowrap {
+    flex-wrap: nowrap;
+}
+
+.margin-xs {
+    margin: 10rpx;
+}
+
+.margin-sm {
+    margin: 20rpx;
+}
+
+.margin {
+    margin: 30rpx;
+}
+
+
+.padding-xs {
+    padding: 10rpx;
+}
+
+.padding-sm {
+    padding: 20rpx;
+}
+
+.padding {
+    padding: 30rpx;
+}
+
+
+.goodsFlex {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-top: 10rpx;
+    padding: 5rpx;
+    background: rgba(29, 29, 29, 0.5);
+    border-radius: 4px 4px 4px 4px;
+    max-width: 400rpx;
+}
+
+.quanziNav {
+    background: white;
+    color: #000000 !important;
+}
+
+
+.center {
+    display: flex;
+    flex-direction: row;
+}
+
+.right {
+    display: flex;
+    flex-direction: row;
+}
+
+.container {
+    background-color: #000000;
+}
+
+.text-bold {
+    font-weight: 700 !important;
+}
+
+.flex {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.nowarp {
+    flex-wrap: nowrap;
+}
+
+.align-center {
+    align-items: center;
+}
+
+.align-end {
+    align-items: flex-end;
+}
+
+.justify-between {
+    justify-content: space-between;
+}
+
+.item {
+    /* width : 750rpx; */
+    background-color: #000000;
+    position: relative;
+}
+
+.videoHover {
+    position: absolute;
+    top: 0;
+    left: 0;
+    flex: 1;
+    background-color: rgba(0, 0, 0, 0.1);
+    justify-content: center;
+    align-items: center;
+
+    /* border-style: dashed;
+    border-color: #DD524D;
+    border-width: 1px; */
+}
+
+.playState {
+    width: 160rpx;
+    height: 160rpx;
+    opacity: 0.2;
+}
+
+.userInfo {
+    position: absolute;
+    bottom: 110px;
+    right: 10px;
+    flex-direction: column;
+}
+
+.userAvatar {
+    border-radius: 500%;
+    margin-bottom: 15px;
+    border-style: solid;
+    border-width: 2px;
+    border-color: #ffffff;
+}
+
+.userAvatar {
+    width: 100rpx;
+    height: 100rpx;
+}
+
+.likeIco,
+.shareIco,
+.commentIco {
+    width: 60rpx;
+    height: 60rpx;
+    margin-top: 15px;
+}
+
+.likeNum,
+.commentNum,
+.shareTex {
+    color: #ffffff;
+    font-size: 30rpx;
+    text-align: center;
+    margin: 5px;
+}
+
+.likeNumActive {
+    color: red;
+}
+
+.content {
+    width: 720rpx;
+    z-index: 99;
+    position: absolute;
+    bottom: 30px;
+    /* justify-content: center; */
+    padding: 15rpx;
+    flex-direction: column;
+    justify-content: flex-start;
+    color: #ffffff;
+}
+
+.userName {
+    font-size: 36rpx;
+    color: #ffffff;
+    font-weight: 500;
+    line-height: 42rpx;
+    margin-top: 80rpx;
+}
+
+.words {
+    margin-top: 10rpx;
+    font-size: 30rpx;
+    color: #ffffff;
+    verflow: hidden;
+    word-break: break-all; /* break-all(允许在单词内换行 */
+    text-overflow: ellipsis; /* 超出部分省略号 */
+    -webkit-box-orient: vertical; /* 设置或检索伸缩盒对象的子元素的排列方式 */
+    -webkit-line-clamp: 2; /* 显示的行数 */
+    lines: 2; /* NVUE下要用这个，让文字超出固定行数隐藏变省略号 */
+}
+
+.root {
+    background-color: #000000;
+}
+</style>

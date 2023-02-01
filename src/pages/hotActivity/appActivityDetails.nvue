@@ -1,0 +1,309 @@
+<template>
+    <view class="content" style="padding-bottom: 100rpx">
+        <view :style="isNav ? '' : 'background:white'" class="headerNav"></view>
+        <u-navbar :height="(CustomBar + StatusBar)" :autoBack="true" :bgColor="'rgba(255,255,255,' + transparency + ')'"
+            :border="false" :fixed="true" :safeAreaInsetTop="false" :titleStyle="'color:rgba(0,0,0,' + transparency + ')'">
+            <view slot="left" class="u-nav-slot flex align-center">
+                <view class="leftNavIcon">
+                    <u-icon name="arrow-left" size="22"></u-icon>
+                </view>
+            </view>
+            <view slot="center" :style="'opacity:' + transparency + ';'" class="u-nav-slot">
+                <view class="text-center">商品详情</view>
+                <view :style="'opacity:' + transparency + ';top:' + CustomBar + 'px;'" class="search" style="width:750rpx">
+                    <view>
+                        <u-tabs :current="current" :list="activityList" :scrollable="false" activeStyle=""
+                            inactiveStyle="color:gray" itemStyle="width:190rpx;height:70rpx;white-space:nowrap;"
+                            lineColor="red" @click="tabSelect"></u-tabs>
+                    </view>
+                </view>
+            </view>
+            <view slot="right" class="u-nav-slot">
+                <view class="rightNavIcon">
+                    <u-icon name="star" size="22"></u-icon>
+                    <image :src="require('/src/static/share2.png')" class="share"></image>
+                </view>
+            </view>
+        </u-navbar>
+        <view class="u-demo-block">
+            <u-swiper height="375" :autoplay="false" :list="list4 || []" @change="e => current = e.current">
+                <view slot="indicator" class="indicator">
+                    <view v-for="(item, index) in list4" :key="index"
+                        :class="[index === current && 'indicator__dot--active']" class="indicator__dot">
+                    </view>
+                </view>
+            </u-swiper>
+        </view>
+        <view class="fatherBox">
+            <!--商品信息-->
+            <myPrice></myPrice>
+            <view v-if="false" class="boxShadow">
+                <view class="productInfo">
+                    <view class="retailPriceBox">
+                        <view class="retailPrice">
+                            <text>建议零售价：</text>
+                            <text>￥ {{ goodsDetails.goodsRetailPrice || 0 }}.00 </text>
+                        </view>
+                        <!-- <button class="cu-btn bg-red light sm">八折优惠活动</button> -->
+                    </view>
+                    <view>
+                        {{ goodsDetails.goodsName || "" }}
+                    </view>
+                    <view class="flex justify-between">
+                        <view class="flex align-center text-sm" style="width:66%">
+                            <!-- <fxbImage mode="" src="http://124.220.219.72:8084/static/productDetails/user.png" style="width: 26rpx;height: 26rpx;"></fxbImage> -->
+                            <text class="text-gray margin-left-xs">
+                                {{ goodsDetails.goodsInfo ? goodsDetails.goodsInfo.controManufactor : "" }}
+                            </text>
+                        </view>
+                        <view class="flex align-center justify-end text-sm" style="width: 30%">
+                            <text class="cuIcon-location"></text>
+                            <text class="text-gray">贵州·贵阳</text>
+                        </view>
+                    </view>
+                    <view class="tag flex align-center margin-tb-sm">
+                        <view class="flex align-center">
+                            <!-- <fxbImage mode="" src="http://124.220.219.72:8084/static/img/index/111.png" width="18" height="27"></fxbImage> -->
+                            <text class="text-sm margin-left-xs" style="color: #E54D42;">成交榜NO.1</text>
+                        </view>
+                        <view class="margin-lr-xs text-gray">|</view>
+                        <view class="bg-orange light text-sm radius" style="padding: 6rpx 10rpx">服务商首推产品</view>
+                        <view class="margin-lr-xs text-gray">|</view>
+                        <view class="bg-orange light text-sm radius" style="padding: 6rpx 10rpx">新品推荐</view>
+                    </view>
+                    <view class="flex align-center">
+                        <text class="text-gray">会员代理价:</text>
+                        <text class="text-red text-bold">￥259.00</text>
+                        <!--            <text class="margin-lr-xs text-red text-bold">￥-->
+                        <!--                <button class="cu-btn bg-red sm" @click="openPopup(2)">会员可查看</button>-->
+                        <!--            </text>-->
+                        <text class="text-blue margin-lr-sm" @click="openPopup(1)">会员有哪些权益？</text>
+                    </view>
+                    <u-popup :round="6" :show="show" mode="center" @close="close" @open="open">
+                        <view v-show="lookInfoState == 1" class="productParameter bg-white padding-tb-lg padding-lr-sm">
+                            <view class="flex align-center justify-between">
+                                <text></text>
+                                <text class="text-lg">会员有哪些权益？</text>
+                                <text class="cuIcon-close" style="font-size: 24px" @click="close"></text>
+                            </view>
+                            <view class="margin-tb">
+                                <text style="line-height: 50rpx">
+                                    1.为保护酒类销售的区域隐私，注册用户需开启会员，会员需缴纳(¥5000.00)会员费后才能查看代理政策以及代理价格。
+                                    2.若用户30日内未代理产品，会员费自动退回相应账户，平台根究时长收取一定的服务费，若代理成功后，会员费也会自动退回。
+                                    3.若用户成功代理产品后还需代理其它产品需重新缴纳会员费，并代理相应产品
+                                </text>
+                            </view>
+                            <view class="flex justify-between margin-top">
+                                <button class="cu-btn bg-red" style="width: 100%"
+                                    @click="gotoPth('/pages/memberPayment/memberAgreement')">去入驻
+                                </button>
+                            </view>
+                        </view>
+                        <view v-show="lookInfoState == 2" class="productParameter bg-white padding-tb-lg padding-lr-sm">
+                            <view class="flex align-center justify-between">
+                                <text></text>
+                                <text class="text-lg">温馨提示</text>
+                                <text class="cuIcon-close" style="font-size: 24px" @click="close"></text>
+                            </view>
+                            <view class="margin-tb">
+                                <text>
+                                    尊敬好的好酒选用户，您好！为保证酒类市场公平行，代理政策必须是会员才可查看，您可以先入驻会员，成为会员后可代理平台产品。谢谢您的理解！
+                                </text>
+                            </view>
+                            <view class="flex justify-between margin-top">
+                                <button class="cu-btn bg-gray" style="width: 46%" @click="close">再考虑</button>
+                                <button class="cu-btn bg-red" style="width: 46%"
+                                    @click="gotoPth('/pages/memberPayment/memberAgreement')">会员入驻
+                                </button>
+                            </view>
+                        </view>
+                    </u-popup>
+                </view>
+            </view>
+        </view>
+    </view>
+</template>
+
+<script>
+
+import fxbImage from "/src/components/fxb/fxb-image";
+import myPrice from './components/myPrice.vue'
+import api from "/src/api/index"
+export default {
+    name: "appActivityDetails",
+    components: {
+        fxbImage,
+        myPrice
+    },
+    data() {
+        return {
+            StatusBar: 0,
+            CustomBar: 0,
+            list4: [{
+                url: "https://cdn.uviewui.com/uview/resources/video.mp4",
+                title: "昨夜星辰昨夜风，画楼西畔桂堂东",
+                poster: "https://cdn.uviewui.com/uview/swiper/swiper1.png"
+            }, {
+                url: "https://cdn.uviewui.com/uview/swiper/swiper2.png",
+                title: "身无彩凤双飞翼，心有灵犀一点通"
+            }, {
+                url: "https://cdn.uviewui.com/uview/swiper/swiper3.png",
+                title: "谁念西风独自凉，萧萧黄叶闭疏窗，沉思往事立残阳"
+            }],
+            isNav: false,
+            transparency: 0.0,
+            activityList: [
+                {
+                    name: "代理政策"
+                },
+                {
+                    name: "商品详情"
+                },
+                {
+                    name: "平台大数据"
+                },
+                {
+                    name: "测评"
+                }
+            ],
+            current: 0,
+            goodsDetails: {}
+        };
+    },
+    onLoad(options) {
+        this.getGoodDetails(options.goodsId);
+        this.setCustomBar();
+    },
+    mounted() {
+        // setTimeout(() => {
+        //     console.log(this.goodsDetails);
+        // },1000)
+    },
+    onPageScroll(e) {
+        if (e.scrollTop >= 375 && e.scrollTop < 400) {
+            if (e.scrollTop >= 400) {
+                this.transparency = 1.0;
+                return;
+            }
+            this.transparency = (((e.scrollTop - 375) / 100) * 3.33).toFixed(1);
+        }
+        if (e.scrollTop >= 400) {
+            this.transparency = 1.0;
+        }
+        if (e.scrollTop <= 375) {
+            this.transparency = 0.0;
+        }
+        if (e.scrollTop >= 375) {
+            this.isNav = false;
+        } else {
+            this.isNav = true;
+        }
+    },
+    methods: {
+        /**
+         * 获取客户端机型CustomBar高度,并保存在prototype中
+         * @param {Object} instance Vue实例
+         */
+        setCustomBar() {
+            uni.getSystemInfo({
+                success: e => {
+                    this.StatusBar = e.statusBarHeight;
+                    if (e.platform == "android") {
+                        this.CustomBar = e.statusBarHeight + 40;
+                    } else {
+                        this.CustomBar = e.statusBarHeight + 45;
+                    }
+                },
+                fail: function (err) {
+                    console.log(err);
+                }
+            });
+        },
+
+        tabSelect(e) {
+
+        },
+        async getGoodDetails(id) {
+            const res = await api.getGoodDetails(id);
+            this.goodsDetails = res.data;
+        }
+    }
+};
+</script>
+
+<style lang="scss" scoped>
+.headerNav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 999999999999;
+    width: 750rpx;
+    //height: var(--StatusBar) !important;
+}
+
+.search {
+    position: fixed;
+    width: 100%;
+    left: 0;
+}
+.fatherBox{
+    background-color: #F0F0F0;
+    width: 750rpx;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 32rpx 24rpx;
+	box-sizing: border-box;
+}
+.retailPrice {
+    display: flex;
+    flex-direction: row;
+	flex: 1;
+    justify-content: space-between;
+}
+
+.leftNavIcon {
+    width: 60rpx;
+    height: 60rpx;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.rightNavIcon {
+    width: 140rpx;
+    height: 60rpx;
+    border-radius: 60rpx;
+    background-color: rgba(255, 255, 255, 0.7);
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.share {
+    width: 48rpx;
+    height: 48rpx;
+}
+
+.indicator {
+    @include flex(row);
+    justify-content: center;
+
+    &__dot {
+        height: 18rpx;
+        width: 18rpx;
+        border-radius: 100px;
+        background-color: rgba(200, 200, 200, 0.35);
+        margin: 0 5px;
+        transition: background-color 0.3s;
+
+        &--active {
+            background-color: #ffffff;
+            border: 1rpx solid #F37B1D;
+        }
+    }
+}
+</style>
